@@ -44,6 +44,9 @@ body{background:#f5f5f5;color:#333;display:flex;justify-content:center;align-ite
 .error-msg{color:red;font-size:12px;align-self:flex-start;margin-top:-12px;margin-bottom:12px;display:none}
 .refresh-btn{cursor:pointer;display:flex;align-items:center;gap:2px}
 .modal-buttons{display:flex;gap:12px;width:100%}.modal-btn{flex:1;padding:10px;border-radius:8px;border:1px solid #14452F;font-size:14px;font-weight:bold;cursor:pointer;text-align:center}
+.modal-btn.submit.processing{background:#a8dfb8;border-color:#a8dfb8;color:#14452F;cursor:wait}
+.submit-spinner{display:inline-block;width:18px;height:18px;border:3px solid rgba(20,69,47,.2);border-top-color:#14452F;border-radius:50%;animation:submit-spin .65s linear infinite;vertical-align:middle}
+@keyframes submit-spin{to{transform:rotate(360deg)}}
 .modal-btn.cancel{background:#fff;color:#14452F}.modal-btn.submit{background:#14452F;color:#fff}.modal-btn.submit.disabled{background:#ccc;border-color:#ccc;cursor:not-allowed}
 .virtual-keyboard{position:absolute;bottom:0;left:0;width:100%;background:#e0e0e0;padding:8px;display:none;flex-direction:column;gap:6px;z-index:200;border-top-left-radius:12px;border-top-right-radius:12px;box-shadow:0 -4px 10px rgba(0,0,0,.1)}
 .vk-top{display:flex;justify-content:space-between;padding:4px 8px;font-size:13px;color:#666}.vk-top span{cursor:pointer;color:#007aff;font-weight:bold}
@@ -57,7 +60,7 @@ body{background:#f5f5f5;color:#333;display:flex;justify-content:center;align-ite
 <body>
 <div class="phone-container">
 <div id="page-home" style="display:flex;flex-direction:column;height:100%">
-<div class="top-bar"><div class="back-btn">←</div><div class="title">主頁</div><div class="my-points">我的點數</div></div>
+<div class="top-bar"><div style="display:flex;align-items:center;gap:7px"><div class="back-btn">←</div><span style="font-size:11px;opacity:.85">v1.0.2</span></div><div class="title">主頁</div><div class="my-points">我的點數</div></div>
 <div class="header-info"><span>9/13Wing Stars 賽前簽名會</span><div class="clock-box" id="clock-trigger" title="點擊設定時間"><div id="live-time">12:59:52.83</div><div id="countdown-display" class="countdown-line" style="display:none"></div></div></div>
 <div class="content">
 <div class="banner-card">
@@ -117,7 +120,7 @@ body{background:#f5f5f5;color:#333;display:flex;justify-content:center;align-ite
 let appState = {
 targetTimeEnabled:false,targetTimestamp:null,consumptionLimit:5.5,startTime:null,
 currentCaptcha:"",inputCaptcha:"",captchaSecondsLeft:120,captchaTimer:null,
-selectedCardType:0,lastResultStatus:null,detailEntryAllowed:true,detailLoadToken:0
+selectedCardType:0,lastResultStatus:null,detailEntryAllowed:true,detailLoadToken:0,submitting:false
 };
 
 setInterval(()=>{
@@ -210,6 +213,7 @@ captchaDisplay.innerText="...";
 setTimeout(()=>{generateNewCaptcha();},loadTime);
 }
 function closeCaptchaModal(){
+ if(appState.submitting)return;
 document.getElementById("captcha-modal").style.display="none";
 hideVirtualKeyboard();
 isFirstOpenCaptcha=true;
@@ -251,44 +255,62 @@ else{if(appState.inputCaptcha.length<6){appState.inputCaptcha+=key;}}
 document.getElementById("captcha-input").value=appState.inputCaptcha;
 }
 function submitRedemption(){
-const endTime=performance.now();
-const durationSec=(appState.targetTimeEnabled&&appState.targetTimestamp!==null)
-  ? Math.max(0,(Date.now()-appState.targetTimestamp)/1000)
-  : (endTime-appState.startTime)/1000;
-const formattedDuration=durationSec.toFixed(2);
-const isCorrectCode=(appState.inputCaptcha===appState.currentCaptcha);
-const isTimeout=durationSec>appState.consumptionLimit;
-closeCaptchaModal();hideVirtualKeyboard();
-const resultModal=document.getElementById("result-modal");
-const resultIcon=document.getElementById("result-icon");
-const resultTitle=document.getElementById("result-title");
-const resultBody=document.getElementById("result-body");
-resultModal.style.display="flex";
-if(isCorrectCode&&!isTimeout){
-appState.lastResultStatus="success";
-resetTargetTimeAfterResult();
-resultIcon.innerText="✓";resultIcon.style.color="#2e7d32";
-resultTitle.innerText="兌換成功！";
-resultBody.innerHTML=`兌換成功！<br>消耗時間：${formattedDuration}秒<br>準確度：100%`;
-}else if(!isCorrectCode&&!isTimeout){
-resultModal.style.display="none";
-document.getElementById("captcha-modal").style.display="flex";
-document.getElementById("error-msg-text").style.display="block";
-return;
-}else{
-appState.lastResultStatus="fail";
-resetTargetTimeAfterResult();
-resultIcon.innerText="✕";resultIcon.style.color="red";
-resultTitle.innerText="兌換失敗！";
-let accuracy=100;
-if(!isCorrectCode){
-let matchCount=0;
-for(let i=0;i<6;i++){if(appState.inputCaptcha[i]===appState.currentCaptcha[i])matchCount++;}
-accuracy=Math.round((matchCount/6)*100);
+ if(appState.submitting)return;
+ const submitBtn=document.getElementById("modal-submit-btn");
+ if(submitBtn.classList.contains("disabled"))return;
+ // 在按下確認按鈕的瞬間凍結計時；後續 0.5 秒不計入消耗時間。
+ const endTime=performance.now();
+ const durationSec=(appState.targetTimeEnabled&&appState.targetTimestamp!==null)
+   ? Math.max(0,(Date.now()-appState.targetTimestamp)/1000)
+   : (endTime-appState.startTime)/1000;
+ const formattedDuration=durationSec.toFixed(2);
+ const isCorrectCode=(appState.inputCaptcha===appState.currentCaptcha);
+ const isTimeout=durationSec>appState.consumptionLimit;
+ appState.submitting=true;
+ hideVirtualKeyboard();
+ submitBtn.className="modal-btn submit processing";
+ submitBtn.innerHTML='<span class="submit-spinner" role="status" aria-label="兌換處理中"></span>';
+ submitBtn.disabled=true;
+ setTimeout(()=>{
+   appState.submitting=false;
+   submitBtn.disabled=false;
+   submitBtn.className="modal-btn submit";
+   submitBtn.textContent="立即兌換";
+   closeCaptchaModal();
+   const resultModal=document.getElementById("result-modal");
+   const resultIcon=document.getElementById("result-icon");
+   const resultTitle=document.getElementById("result-title");
+   const resultBody=document.getElementById("result-body");
+   resultModal.style.display="flex";
+   if(isCorrectCode&&!isTimeout){
+     appState.lastResultStatus="success";
+     resetTargetTimeAfterResult();
+     resultIcon.innerText="✓";resultIcon.style.color="#2e7d32";
+     resultTitle.innerText="兌換成功！";
+     resultBody.innerHTML=`兌換成功！<br>消耗時間：${formattedDuration}秒<br>準確度：100%`;
+   }else if(!isCorrectCode&&!isTimeout){
+     resultModal.style.display="none";
+     document.getElementById("captcha-modal").style.display="flex";
+     document.getElementById("error-msg-text").style.display="block";
+     // 驗證碼錯誤需重試時，扣除第二次載入的 0.5 秒。
+     if(!appState.targetTimeEnabled)appState.startTime+=performance.now()-endTime;
+     return;
+   }else{
+     appState.lastResultStatus="fail";
+     resetTargetTimeAfterResult();
+     resultIcon.innerText="✕";resultIcon.style.color="red";
+     resultTitle.innerText="兌換失敗！";
+     let accuracy=100;
+     if(!isCorrectCode){
+       let matchCount=0;
+       for(let i=0;i<6;i++){if(appState.inputCaptcha[i]===appState.currentCaptcha[i])matchCount++;}
+       accuracy=Math.round((matchCount/6)*100);
+     }
+     resultBody.innerHTML=`兌換失敗！<br><span style="color:red;">消耗時間：${formattedDuration}秒（設定時間：${appState.consumptionLimit}秒）</span><br>準確度：${accuracy}%`;
+   }
+ },500);
 }
-resultBody.innerHTML=`兌換失敗！<br><span style="color:red;">消耗時間：${formattedDuration}秒（設定時間：${appState.consumptionLimit}秒）</span><br>準確度：${accuracy}%`;
-}
-}
+
 function resetTargetTimeAfterResult(){
 if(!appState.targetTimeEnabled)return;
 appState.targetTimeEnabled=false;
