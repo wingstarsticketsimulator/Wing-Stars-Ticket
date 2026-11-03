@@ -40,7 +40,7 @@ body{background:#f5f5f5;color:#333;display:flex;justify-content:center;align-ite
 .modal-title{font-size:16px;font-weight:bold;margin-bottom:4px}.modal-desc{font-size:12px;color:#666;margin-bottom:16px;text-align:center}
 .captcha-input-container{width:100%;display:flex;align-items:center;border:1px solid #ccc;border-radius:8px;padding:8px 12px;margin-bottom:8px;cursor:pointer}
 .captcha-input{width:100%;border:none;outline:none;font-size:16px;letter-spacing:2px;background:transparent;pointer-events:none}
-.refresh-row{width:100%;display:flex;justify-content:space-between;align-items:center;gap:6px;font-size:11px;color:#14452F;margin-bottom:16px;min-height:18px}.refresh-right{display:flex;align-items:center;justify-content:flex-end;gap:5px;white-space:nowrap}.refresh-btn{white-space:nowrap}
+.refresh-row{width:100%;display:flex;justify-content:space-between;align-items:center;gap:6px;font-size:11px;color:#14452F;margin-bottom:16px;min-height:18px}.refresh-right{margin-left:auto;display:flex;align-items:center;justify-content:flex-end;gap:5px;white-space:nowrap}.refresh-btn{white-space:nowrap}
 .error-msg{color:#d62828;font-size:11px;white-space:nowrap;display:none}
 .refresh-btn{cursor:pointer;display:flex;align-items:center;gap:2px}
 .modal-buttons{display:flex;gap:12px;width:100%}.modal-btn{flex:1;padding:10px;border-radius:8px;border:1px solid #14452F;font-size:14px;font-weight:bold;cursor:pointer;text-align:center}
@@ -128,7 +128,7 @@ body{min-height:0;align-items:stretch;background:#f9f9f9}
 <body>
 <div class="phone-container">
 <div id="page-home" style="display:flex;flex-direction:column;height:100%">
-<div class="top-bar"><div style="display:flex;align-items:center;gap:7px"><div class="back-btn">←</div><span style="font-size:11px;opacity:.85">v1.0.5</span></div><div class="title">主頁</div><div class="my-points" role="button" tabindex="0" onclick="openRecords()">我的紀錄</div></div>
+<div class="top-bar"><div style="display:flex;align-items:center;gap:7px"><div class="back-btn">←</div><span style="font-size:11px;opacity:.85">v1.0.6</span></div><div class="title">主頁</div><div class="my-points" role="button" tabindex="0" onclick="openRecords()">我的紀錄</div></div>
 <div class="header-info"><span>9/13Wing Stars 賽前簽名會</span><div class="clock-box" id="clock-trigger" title="點擊設定時間"><div id="live-time">12:59:52.83</div><div id="countdown-display" class="countdown-line" style="display:none"></div></div></div>
 <div class="content">
 <div class="banner-card">
@@ -232,6 +232,7 @@ appState.consumptionLimit=parseFloat(document.getElementById("set-consumption-li
 document.getElementById("settings-modal").style.display="none";
 }
 function goToDetail(cardType){
+isFirstOpenCaptcha=true;
 appState.lastResultStatus=null;
 appState.selectedCardType=cardType;
 appState.pausedSubmitMs=0;
@@ -267,6 +268,7 @@ else{actionBtn.onclick=openCaptchaModal;actionBtn.disabled=false;}
 },loadTime);
 }
 function goBackHome(){
+isFirstOpenCaptcha=true;
 appState.detailLoadToken++;
 document.getElementById("page-detail").style.display="none";
 document.getElementById("page-home").style.display="flex";
@@ -287,12 +289,21 @@ appState.inputCaptcha="";
 appState.currentCaptcha="";
 document.getElementById("error-msg-text").style.display="none";
 document.getElementById("modal-submit-btn").className="modal-btn submit disabled";
-const loadTime=isFirstOpenCaptcha?(600+Math.random()*400):0;
+const firstOpen=isFirstOpenCaptcha;
+const loadTime=firstOpen?(600+Math.random()*400):0;
 const captchaLoadToken=++appState.captchaLoadToken;
 isFirstOpenCaptcha=false;
 const captchaDisplay=document.getElementById("captcha-display");
-captchaDisplay.innerHTML='<span class="captcha-loading-spinner" role="status" aria-label="驗證碼載入中"></span>';
-setTimeout(()=>{if(captchaLoadToken===appState.captchaLoadToken)generateNewCaptcha();},loadTime);
+if(appState.captchaTimer){clearInterval(appState.captchaTimer);appState.captchaTimer=null;}
+if(firstOpen){
+  captchaDisplay.innerHTML='<span class="captcha-loading-spinner" role="status" aria-label="驗證碼載入中"></span>';
+  document.getElementById("captcha-countdown").innerText="—:—";
+  setTimeout(()=>{
+    if(captchaLoadToken===appState.captchaLoadToken)generateNewCaptcha();
+  },loadTime);
+}else{
+  generateNewCaptcha();
+}
 }
 function closeCaptchaModal(){
  if(appState.submitting)return;
@@ -300,7 +311,6 @@ function closeCaptchaModal(){
  if(appState.captchaTimer){clearInterval(appState.captchaTimer);appState.captchaTimer=null;}
 document.getElementById("captcha-modal").style.display="none";
 hideVirtualKeyboard();
-isFirstOpenCaptcha=true;
 }
 function isValidCaptcha(s){
  if(!/^[1-9][0-9]{5}$/.test(s))return false;
@@ -324,6 +334,7 @@ document.getElementById("captcha-display").innerText=appState.currentCaptcha;
 const submitBtn=document.getElementById("modal-submit-btn");
 submitBtn.className="modal-btn submit";
 appState.captchaSecondsLeft=120;
+document.getElementById("captcha-countdown").innerText="02:00";
 if(appState.captchaTimer)clearInterval(appState.captchaTimer);
 appState.captchaTimer=setInterval(()=>{
 appState.captchaSecondsLeft--;
