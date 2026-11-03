@@ -2,7 +2,7 @@
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>Wing Stars 賽前簽名會搶票模擬器</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-tap-highlight-color:transparent;user-select:none}
@@ -60,12 +60,50 @@ body{background:#f5f5f5;color:#333;display:flex;justify-content:center;align-ite
 .settings-box{background:#fff;width:85%;padding:20px;border-radius:12px;display:flex;flex-direction:column;gap:12px}
 .settings-box h3{font-size:16px;color:#14452F;margin-bottom:4px}.settings-box label{font-size:13px;color:#555}
 .settings-box select,.settings-box input{width:100%;padding:8px;border:1px solid #ccc;border-radius:6px;font-size:14px}
+
+/* v1.0.4 — Chrome-first viewport and content-aware scrolling */
+html,body{width:100%;height:100%;overflow:hidden;overscroll-behavior:none}
+body{min-height:0;align-items:stretch;background:#f9f9f9}
+.phone-container{height:var(--app-height,100dvh);max-height:none;min-height:0;overflow:hidden;overscroll-behavior:none}
+#page-home,#page-detail{height:100%;min-height:0;overflow:hidden}
+#page-home>.content{min-height:0;flex:1 1 auto;overflow-y:hidden;overscroll-behavior-y:contain;scrollbar-width:none}
+#page-home>.content::-webkit-scrollbar{display:none}
+#page-home>.content.can-scroll{overflow-y:auto;-webkit-overflow-scrolling:touch}
+#page-home .item-card:last-child{margin-bottom:0}
+.detail-page{min-height:0}
+.detail-content{min-height:0;flex:1 1 auto;overflow-y:hidden;overscroll-behavior-y:contain;padding:12px 16px 10px;scrollbar-width:none}
+.detail-content::-webkit-scrollbar{display:none}
+.detail-content.can-scroll{overflow-y:auto;-webkit-overflow-scrolling:touch}
+.detail-img{aspect-ratio:16/8.3;margin-bottom:12px}
+.detail-content h3{margin-bottom:9px!important}
+.points-box{margin-bottom:12px;padding:10px 12px}
+.info-row{margin-bottom:9px;font-size:13px;line-height:1.25}
+.info-label{margin-bottom:2px}
+.bottom-action-bar{position:static;padding:8px 0 4px;border:0;background:transparent}
+.action-btn{padding:11px}
+#captcha-modal{padding:0;align-items:flex-start;transition:none}
+#captcha-modal .modal-box{position:absolute;top:var(--captcha-top,120px);left:50%;transform:translateX(-50%);max-height:calc(100% - var(--captcha-top,120px) - 8px);overflow-y:auto}
+#captcha-modal.keyboard-visible{padding-bottom:0}
+.virtual-keyboard{padding:7px 10px calc(18px + env(safe-area-inset-bottom,0px));gap:6px}
+.vk-top{min-height:30px;font-size:13px}
+.vk-grid{gap:6px}
+.vk-key{height:48px;min-height:48px;padding:11px 0;font-size:20px;touch-action:manipulation}
+@media(max-height:680px){.detail-img{aspect-ratio:16/6}.detail-content{padding-top:8px}.info-row{margin-bottom:7px}.vk-key{height:42px;min-height:42px}}
+@media(min-width:451px){.phone-container{height:min(840px,var(--app-height,100dvh));max-height:none}}
+
+/* v1.0.4 layout refinement: relaxed details, bottom-aligned action */
+.detail-content{display:flex;flex-direction:column;padding-bottom:14px}
+.detail-content .info-row{margin-bottom:13px;line-height:1.38}
+.detail-content .info-label{margin-bottom:3px}
+.detail-content .bottom-action-bar{margin-top:auto;padding-top:26px;padding-bottom:0;flex-shrink:0}
+.detail-content .action-btn{min-height:48px}
+@media(max-height:680px){.detail-content .info-row{margin-bottom:10px}.detail-content .bottom-action-bar{padding-top:20px}}
 </style>
 </head>
 <body>
 <div class="phone-container">
 <div id="page-home" style="display:flex;flex-direction:column;height:100%">
-<div class="top-bar"><div style="display:flex;align-items:center;gap:7px"><div class="back-btn">←</div><span style="font-size:11px;opacity:.85">v1.0.3</span></div><div class="title">主頁</div><div class="my-points">我的點數</div></div>
+<div class="top-bar"><div style="display:flex;align-items:center;gap:7px"><div class="back-btn">←</div><span style="font-size:11px;opacity:.85">v1.0.4</span></div><div class="title">主頁</div><div class="my-points">我的點數</div></div>
 <div class="header-info"><span>9/13Wing Stars 賽前簽名會</span><div class="clock-box" id="clock-trigger" title="點擊設定時間"><div id="live-time">12:59:52.83</div><div id="countdown-display" class="countdown-line" style="display:none"></div></div></div>
 <div class="content">
 <div class="banner-card">
@@ -89,9 +127,8 @@ body{background:#f5f5f5;color:#333;display:flex;justify-content:center;align-ite
 <div class="info-row"><div class="info-label">兌換上限</div><div class="info-value">1次</div></div>
 <div class="info-row"><div class="info-label">全站數量</div><div class="info-value">50</div></div>
 <div class="info-row"><div class="info-label">使用期間</div><div class="info-value">2026/09/13 12:00 ~ 2026/09/13 19:00</div></div>
-<div class="info-row"><div class="info-label">使用地點</div><div class="info-value">澄清湖棒球場 (高雄市鳥松區大埤路 113 號)</div></div>
+<div class="info-row"><div class="info-label">使用地點</div><div class="info-value">澄清湖棒球場 (高雄市鳥松區大埤路 113 號)</div></div><div class="bottom-action-bar"><button id="main-action-btn" class="action-btn green" onclick="openCaptchaModal()">立即兌換</button></div>
 </div>
-<div class="bottom-action-bar"><button id="main-action-btn" class="action-btn green" onclick="openCaptchaModal()">立即兌換</button></div>
 </div>
 
 <div class="modal-overlay" id="captcha-modal"><div class="modal-box">
@@ -167,6 +204,7 @@ appState.pausedSubmitMs=0;
 const detailLoadToken=++appState.detailLoadToken;
 document.getElementById("page-home").style.display="none";
 document.getElementById("page-detail").style.display="flex";
+requestAnimationFrame(updateScrollModes);
 if(cardType===0){
 document.getElementById("detail-main-title").innerText="9/13 Wing Stars 賽前簽名會 (鷹國皇家會員專屬)";
 document.getElementById("detail-nav-title").innerText="活動詳情";
@@ -182,9 +220,11 @@ const loadingEl=document.getElementById("loading-status");
 const actionBtn=document.getElementById("main-action-btn");
 loadingEl.style.display="block";loadingEl.innerText="正在刷新...";
 actionBtn.style.display="none";
+requestAnimationFrame(updateScrollModes);
 setTimeout(()=>{
 if(detailLoadToken!==appState.detailLoadToken)return;
 loadingEl.style.display="none";actionBtn.style.display="block";
+requestAnimationFrame(updateScrollModes);
 if(appState.lastResultStatus==="success"){actionBtn.className="action-btn gray";actionBtn.innerText="已達兌換上限";}
 else if(appState.lastResultStatus==="fail"){actionBtn.className="action-btn gray";actionBtn.innerText="已被兌換完畢";}
 else{actionBtn.className="action-btn green";actionBtn.innerText="立即兌換";}
@@ -197,6 +237,7 @@ function goBackHome(){
 appState.detailLoadToken++;
 document.getElementById("page-detail").style.display="none";
 document.getElementById("page-home").style.display="flex";
+requestAnimationFrame(updateScrollModes);
 appState.lastResultStatus=null;
 }
 let isFirstOpenCaptcha=true;
@@ -207,6 +248,7 @@ if(appState.targetTimeEnabled&&appState.targetTimestamp!==null){
   appState.startTime=null; // 有設定時間時，以設定的絕對時間計算，不從點擊時重新計時。
 }
 document.getElementById("captcha-modal").style.display="flex";
+requestAnimationFrame(positionCaptcha);
 document.getElementById("captcha-input").value="";
 appState.inputCaptcha="";
 appState.currentCaptcha="";
@@ -263,24 +305,53 @@ const inputTrigger=document.getElementById("captcha-input-trigger");
 const virtualKeyboard=document.getElementById("virtual-keyboard");
 const doneBtn=document.getElementById("vk-done-btn");
 inputTrigger.addEventListener("click",showVirtualKeyboard);
-inputTrigger.addEventListener("touchstart",e=>{e.preventDefault();showVirtualKeyboard();});
+
 doneBtn.addEventListener("click",hideVirtualKeyboard);
-doneBtn.addEventListener("touchstart",e=>{e.preventDefault();hideVirtualKeyboard();});
+
+function updateViewport(){
+ const h=window.visualViewport?window.visualViewport.height:window.innerHeight;
+ document.documentElement.style.setProperty("--app-height",Math.round(h)+"px");
+ requestAnimationFrame(()=>{updateScrollModes();positionCaptcha();});
+}
+function updateScrollModes(){
+ for(const [container,selector] of [
+  [document.querySelector("#page-home>.content"),"#page-home"],
+  [document.querySelector(".detail-content"),"#page-detail"]
+ ]){
+  if(!container||document.querySelector(selector).style.display==="none")continue;
+  container.classList.remove("can-scroll");
+  container.scrollTop=0;
+  if(container.scrollHeight>container.clientHeight+2)container.classList.add("can-scroll");
+ }
+}
+function positionCaptcha(){
+ const modal=document.getElementById("captcha-modal");
+ if(modal.style.display!=="flex")return;
+ const panel=modal.querySelector(".modal-box");
+ const kbHeight=virtualKeyboard.offsetHeight;
+ const gap=12;
+ // Reserve keyboard space from the first frame; never jump when it opens.
+ const available=Math.max(0,modal.clientHeight-kbHeight-gap);
+ const panelHeight=panel.offsetHeight;
+ const top=Math.max(8,Math.round(available-panelHeight-28));
+ modal.style.setProperty("--captcha-top",top+"px");
+}
 function showVirtualKeyboard(){
  if(document.getElementById("captcha-modal").style.display!=="flex")return;
- const modal=document.getElementById("captcha-modal");
- modal.style.setProperty("--keyboard-height",virtualKeyboard.offsetHeight+"px");
- modal.classList.add("keyboard-visible");
+ positionCaptcha();
  virtualKeyboard.classList.add("open");
 }
-function hideVirtualKeyboard(){
- virtualKeyboard.classList.remove("open");
- document.getElementById("captcha-modal").classList.remove("keyboard-visible");
+function hideVirtualKeyboard(){virtualKeyboard.classList.remove("open");}
+if(window.visualViewport){
+ window.visualViewport.addEventListener("resize",updateViewport);
 }
+window.addEventListener("resize",updateViewport);
+window.addEventListener("orientationchange",()=>setTimeout(updateViewport,100));
+document.addEventListener("DOMContentLoaded",updateViewport);
+updateViewport();
 const keys=document.querySelectorAll(".vk-key");
 keys.forEach(key=>{
 const handleKeyPress=e=>{e.preventDefault();e.stopPropagation();const keyValue=key.getAttribute("data-key");pressKey(keyValue);};
-key.addEventListener("touchstart",handleKeyPress,{passive:false});
 key.addEventListener("click",handleKeyPress);
 });
 function pressKey(key){
@@ -326,6 +397,7 @@ function submitRedemption(){
      resultModal.style.display="none";
      document.getElementById("captcha-modal").style.display="flex";
      document.getElementById("error-msg-text").style.display="block";
+requestAnimationFrame(positionCaptcha);
      // 驗證碼錯誤需重試時，扣除第二次載入的 0.5 秒。
      const pausedMs=performance.now()-endTime;
      if(!appState.targetTimeEnabled)appState.startTime+=pausedMs;
