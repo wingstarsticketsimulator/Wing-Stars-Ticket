@@ -35,22 +35,27 @@ body{background:#f5f5f5;color:#333;display:flex;justify-content:center;align-ite
 .action-btn{width:100%;padding:12px;border-radius:8px;border:none;font-size:16px;font-weight:bold;cursor:pointer;text-align:center}
 .action-btn.green{background:#14452F;color:#fff}.action-btn.gray{background:#ccc;color:#666;cursor:not-allowed}
 .modal-overlay{position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);display:none;justify-content:center;align-items:center;z-index:100}
-.modal-box{background:#fff;width:90%;max-width:340px;border-radius:16px;padding:20px;display:flex;flex-direction:column;align-items:center;position:relative}
+.modal-box{max-height:calc(100% - 20px);overflow-y:auto;background:#fff;width:90%;max-width:340px;border-radius:16px;padding:20px;display:flex;flex-direction:column;align-items:center;position:relative}
 .captcha-box{background:#fff;border:2px solid #14452F;color:#14452F;font-size:20px;font-weight:bold;padding:8px 20px;border-radius:8px;letter-spacing:4px;margin-bottom:12px}
 .modal-title{font-size:16px;font-weight:bold;margin-bottom:4px}.modal-desc{font-size:12px;color:#666;margin-bottom:16px;text-align:center}
 .captcha-input-container{width:100%;display:flex;align-items:center;border:1px solid #ccc;border-radius:8px;padding:8px 12px;margin-bottom:8px;cursor:pointer}
 .captcha-input{width:100%;border:none;outline:none;font-size:16px;letter-spacing:2px;background:transparent;pointer-events:none}
-.refresh-row{width:100%;display:flex;justify-content:space-between;align-items:center;font-size:12px;color:#14452F;margin-bottom:16px}
-.error-msg{color:red;font-size:12px;align-self:flex-start;margin-top:-12px;margin-bottom:12px;display:none}
+.refresh-row{width:100%;display:flex;justify-content:space-between;align-items:center;gap:6px;font-size:11px;color:#14452F;margin-bottom:16px;min-height:18px}.refresh-right{display:flex;align-items:center;justify-content:flex-end;gap:5px;white-space:nowrap}.refresh-btn{white-space:nowrap}
+.error-msg{color:#d62828;font-size:11px;white-space:nowrap;display:none}
 .refresh-btn{cursor:pointer;display:flex;align-items:center;gap:2px}
 .modal-buttons{display:flex;gap:12px;width:100%}.modal-btn{flex:1;padding:10px;border-radius:8px;border:1px solid #14452F;font-size:14px;font-weight:bold;cursor:pointer;text-align:center}
 .modal-btn.submit.processing{background:#a8dfb8;border-color:#a8dfb8;color:#14452F;cursor:wait}
 .submit-spinner{display:inline-block;width:18px;height:18px;border:3px solid rgba(20,69,47,.2);border-top-color:#14452F;border-radius:50%;animation:submit-spin .65s linear infinite;vertical-align:middle}
 @keyframes submit-spin{to{transform:rotate(360deg)}}
 .modal-btn.cancel{background:#fff;color:#14452F}.modal-btn.submit{background:#14452F;color:#fff}.modal-btn.submit.disabled{background:#ccc;border-color:#ccc;cursor:not-allowed}
-.virtual-keyboard{position:absolute;bottom:0;left:0;width:100%;background:#e0e0e0;padding:8px;display:none;flex-direction:column;gap:6px;z-index:200;border-top-left-radius:12px;border-top-right-radius:12px;box-shadow:0 -4px 10px rgba(0,0,0,.1)}
-.vk-top{display:flex;justify-content:space-between;padding:4px 8px;font-size:13px;color:#666}.vk-top span{cursor:pointer;color:#007aff;font-weight:bold}
-.vk-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.vk-key{background:#fff;padding:14px 0;text-align:center;border-radius:6px;font-size:20px;font-weight:bold;cursor:pointer;box-shadow:0 1px 2px rgba(0,0,0,.1);user-select:none}.vk-key:active{background:#b0b0b0}
+.virtual-keyboard{position:absolute;bottom:0;left:0;width:100%;background:#e0e0e0;padding:5px 10px calc(14px + env(safe-area-inset-bottom, 0px));display:flex;flex-direction:column;gap:4px;z-index:200;border-top-left-radius:12px;border-top-right-radius:12px;box-shadow:0 -4px 10px rgba(0,0,0,.1);transform:translateY(105%);visibility:hidden;pointer-events:none;transition:transform .15s ease-out,visibility 0s linear .15s}
+.virtual-keyboard.open{transform:translateY(0);visibility:visible;pointer-events:auto;transition:transform .15s ease-out,visibility 0s}
+.vk-top{display:flex;justify-content:space-between;padding:2px 7px;font-size:12px;color:#666;min-height:24px;align-items:center}.vk-top span{cursor:pointer;color:#007aff;font-weight:bold}
+.vk-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}.vk-key{background:#fff;padding:9px 0;text-align:center;border-radius:6px;font-size:18px;font-weight:bold;cursor:pointer;box-shadow:0 1px 2px rgba(0,0,0,.1);user-select:none;min-height:39px}.vk-key:active{background:#b0b0b0}
+#captcha-modal{padding:12px 0;transition:padding-bottom .15s ease-out}
+#captcha-modal.keyboard-visible{padding-bottom:var(--keyboard-height, 270px)}
+#captcha-modal .modal-box{transform:translateY(-18px)}
+.captcha-loading-spinner{display:inline-block;width:22px;height:22px;border:3px solid #cde6d3;border-top-color:#14452F;border-radius:50%;animation:submit-spin .65s linear infinite;vertical-align:middle}
 .settings-modal{position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);display:none;justify-content:center;align-items:center;z-index:300}
 .settings-box{background:#fff;width:85%;padding:20px;border-radius:12px;display:flex;flex-direction:column;gap:12px}
 .settings-box h3{font-size:16px;color:#14452F;margin-bottom:4px}.settings-box label{font-size:13px;color:#555}
@@ -60,7 +65,7 @@ body{background:#f5f5f5;color:#333;display:flex;justify-content:center;align-ite
 <body>
 <div class="phone-container">
 <div id="page-home" style="display:flex;flex-direction:column;height:100%">
-<div class="top-bar"><div style="display:flex;align-items:center;gap:7px"><div class="back-btn">←</div><span style="font-size:11px;opacity:.85">v1.0.2</span></div><div class="title">主頁</div><div class="my-points">我的點數</div></div>
+<div class="top-bar"><div style="display:flex;align-items:center;gap:7px"><div class="back-btn">←</div><span style="font-size:11px;opacity:.85">v1.0.3</span></div><div class="title">主頁</div><div class="my-points">我的點數</div></div>
 <div class="header-info"><span>9/13Wing Stars 賽前簽名會</span><div class="clock-box" id="clock-trigger" title="點擊設定時間"><div id="live-time">12:59:52.83</div><div id="countdown-display" class="countdown-line" style="display:none"></div></div></div>
 <div class="content">
 <div class="banner-card">
@@ -92,8 +97,7 @@ body{background:#f5f5f5;color:#333;display:flex;justify-content:center;align-ite
 <div class="modal-overlay" id="captcha-modal"><div class="modal-box">
 <div class="captcha-box" id="captcha-display">------</div><div class="modal-title">輸入驗證碼完成兌換</div><div class="modal-desc">請輸入驗證碼確認身份，兌換後不可取消。</div>
 <div class="captcha-input-container" id="captcha-input-trigger"><input type="text" id="captcha-input" class="captcha-input" placeholder="輸入6位數驗證碼" readonly></div>
-<div class="error-msg" id="error-msg-text">驗證碼錯誤</div>
-<div class="refresh-row"><div class="refresh-btn" onclick="refreshCaptchaCode()"><span>🔄 驗證碼更新</span></div><span id="captcha-countdown">02:00</span></div>
+<div class="refresh-row"><span class="error-msg" id="error-msg-text">驗證碼錯誤</span><div class="refresh-right"><div class="refresh-btn" onclick="refreshCaptchaCode()"><span>🔄 驗證碼更新</span></div><span id="captcha-countdown">02:00</span></div></div>
 <div class="modal-buttons"><button class="modal-btn cancel" onclick="closeCaptchaModal()">取消</button><button class="modal-btn submit disabled" id="modal-submit-btn" onclick="submitRedemption()">立即兌換</button></div>
 </div></div>
 
@@ -105,7 +109,7 @@ body{background:#f5f5f5;color:#333;display:flex;justify-content:center;align-ite
 <h3>搶票與計時設定</h3>
 <div><label>搶票時間設定 (可關閉)</label><select id="set-target-enabled"><option value="false">關閉搶票時間</option><option value="true">開啟搶票時間</option></select></div>
 <div id="target-time-inputs" style="display:none;margin-top:6px"><label>設定目標時間 (例: 2026/11/03 12:00:00)</label><input type="datetime-local" id="set-target-datetime" style="margin-top:4px"></div>
-<div><label>消耗時間限制 (預設5.5秒)</label><select id="set-consumption-limit"><option value="4">4秒</option><option value="4.5">4.5秒</option><option value="5">5秒</option><option value="5.5" selected>5.5秒</option><option value="6">6秒</option><option value="6.5">6.5秒</option><option value="7">7秒</option></select></div>
+<div><label>消耗時間限制 (預設5.5秒)</label><select id="set-consumption-limit"><option value="3.5">3.5秒超高速模式！</option><option value="4">4秒</option><option value="4.5">4.5秒</option><option value="5">5秒</option><option value="5.5" selected>5.5秒</option><option value="6">6秒</option><option value="6.5">6.5秒</option><option value="7">7秒</option><option value="7.5">7.5秒</option><option value="8">8秒</option></select></div>
 <button class="action-btn green" style="margin-top:8px" onclick="saveSettings()">儲存設定</button>
 </div></div>
 
@@ -118,7 +122,7 @@ body{background:#f5f5f5;color:#333;display:flex;justify-content:center;align-ite
 
 <script>
 let appState = {
-targetTimeEnabled:false,targetTimestamp:null,consumptionLimit:5.5,startTime:null,
+targetTimeEnabled:false,targetTimestamp:null,consumptionLimit:5.5,startTime:null,captchaLoadToken:0,pausedSubmitMs:0,
 currentCaptcha:"",inputCaptcha:"",captchaSecondsLeft:120,captchaTimer:null,
 selectedCardType:0,lastResultStatus:null,detailEntryAllowed:true,detailLoadToken:0,submitting:false
 };
@@ -158,8 +162,8 @@ document.getElementById("settings-modal").style.display="none";
 }
 function goToDetail(cardType){
 appState.selectedCardType=cardType;
-// 進入詳情頁當下即鎖定是否符合搶票時間，之後不自動解鎖。
-appState.detailEntryAllowed=!(appState.targetTimeEnabled&&appState.targetTimestamp!==null&&Date.now()<appState.targetTimestamp);
+appState.pausedSubmitMs=0;
+// 搶票時間在第一次假裝載入結束時才判斷。
 const detailLoadToken=++appState.detailLoadToken;
 document.getElementById("page-home").style.display="none";
 document.getElementById("page-detail").style.display="flex";
@@ -184,6 +188,7 @@ loadingEl.style.display="none";actionBtn.style.display="block";
 if(appState.lastResultStatus==="success"){actionBtn.className="action-btn gray";actionBtn.innerText="已達兌換上限";}
 else if(appState.lastResultStatus==="fail"){actionBtn.className="action-btn gray";actionBtn.innerText="已被兌換完畢";}
 else{actionBtn.className="action-btn green";actionBtn.innerText="立即兌換";}
+appState.detailEntryAllowed=!(appState.targetTimeEnabled&&appState.targetTimestamp!==null&&Date.now()<appState.targetTimestamp);
 if(!appState.detailEntryAllowed){actionBtn.className="action-btn gray";actionBtn.innerText="未到達時間不可兌換";actionBtn.onclick=null;}
 else{actionBtn.onclick=openCaptchaModal;}
 },loadTime);
@@ -204,22 +209,42 @@ if(appState.targetTimeEnabled&&appState.targetTimestamp!==null){
 document.getElementById("captcha-modal").style.display="flex";
 document.getElementById("captcha-input").value="";
 appState.inputCaptcha="";
+appState.currentCaptcha="";
 document.getElementById("error-msg-text").style.display="none";
 document.getElementById("modal-submit-btn").className="modal-btn submit disabled";
 const loadTime=isFirstOpenCaptcha?(600+Math.random()*400):0;
+const captchaLoadToken=++appState.captchaLoadToken;
 isFirstOpenCaptcha=false;
 const captchaDisplay=document.getElementById("captcha-display");
-captchaDisplay.innerText="...";
-setTimeout(()=>{generateNewCaptcha();},loadTime);
+captchaDisplay.innerHTML='<span class="captcha-loading-spinner" role="status" aria-label="驗證碼載入中"></span>';
+setTimeout(()=>{if(captchaLoadToken===appState.captchaLoadToken)generateNewCaptcha();},loadTime);
 }
 function closeCaptchaModal(){
  if(appState.submitting)return;
+ appState.captchaLoadToken++;
+ if(appState.captchaTimer){clearInterval(appState.captchaTimer);appState.captchaTimer=null;}
 document.getElementById("captcha-modal").style.display="none";
 hideVirtualKeyboard();
 isFirstOpenCaptcha=true;
 }
+function isValidCaptcha(s){
+ if(!/^[1-9][0-9]{5}$/.test(s))return false;
+ const counts={};
+ for(const d of s)counts[d]=(counts[d]||0)+1;
+ if(Object.keys(counts).length<4||Math.max(...Object.values(counts))>3)return false;
+ let pairs=0;
+ for(let i=1;i<s.length;i++)if(s[i]===s[i-1])pairs++;
+ if(pairs>1)return false;
+ if(Object.values(counts).includes(3)&&pairs>0)return false;
+ return true;
+}
+function makeValidCaptcha(){
+ let code;
+ do{code=String(Math.floor(100000+Math.random()*900000));}while(!isValidCaptcha(code));
+ return code;
+}
 function generateNewCaptcha(){
-appState.currentCaptcha=String(Math.floor(100000+Math.random()*900000));
+appState.currentCaptcha=makeValidCaptcha();
 document.getElementById("captcha-display").innerText=appState.currentCaptcha;
 const submitBtn=document.getElementById("modal-submit-btn");
 submitBtn.className="modal-btn submit";
@@ -241,8 +266,17 @@ inputTrigger.addEventListener("click",showVirtualKeyboard);
 inputTrigger.addEventListener("touchstart",e=>{e.preventDefault();showVirtualKeyboard();});
 doneBtn.addEventListener("click",hideVirtualKeyboard);
 doneBtn.addEventListener("touchstart",e=>{e.preventDefault();hideVirtualKeyboard();});
-function showVirtualKeyboard(){virtualKeyboard.style.display="flex";}
-function hideVirtualKeyboard(){virtualKeyboard.style.display="none";}
+function showVirtualKeyboard(){
+ if(document.getElementById("captcha-modal").style.display!=="flex")return;
+ const modal=document.getElementById("captcha-modal");
+ modal.style.setProperty("--keyboard-height",virtualKeyboard.offsetHeight+"px");
+ modal.classList.add("keyboard-visible");
+ virtualKeyboard.classList.add("open");
+}
+function hideVirtualKeyboard(){
+ virtualKeyboard.classList.remove("open");
+ document.getElementById("captcha-modal").classList.remove("keyboard-visible");
+}
 const keys=document.querySelectorAll(".vk-key");
 keys.forEach(key=>{
 const handleKeyPress=e=>{e.preventDefault();e.stopPropagation();const keyValue=key.getAttribute("data-key");pressKey(keyValue);};
@@ -257,11 +291,11 @@ document.getElementById("captcha-input").value=appState.inputCaptcha;
 function submitRedemption(){
  if(appState.submitting)return;
  const submitBtn=document.getElementById("modal-submit-btn");
- if(submitBtn.classList.contains("disabled"))return;
+ if(submitBtn.classList.contains("disabled")||!appState.currentCaptcha)return;
  // 在按下確認按鈕的瞬間凍結計時；後續 0.5 秒不計入消耗時間。
  const endTime=performance.now();
  const durationSec=(appState.targetTimeEnabled&&appState.targetTimestamp!==null)
-   ? Math.max(0,(Date.now()-appState.targetTimestamp)/1000)
+   ? Math.max(0,(Date.now()-appState.targetTimestamp-appState.pausedSubmitMs)/1000)
    : (endTime-appState.startTime)/1000;
  const formattedDuration=durationSec.toFixed(2);
  const isCorrectCode=(appState.inputCaptcha===appState.currentCaptcha);
@@ -286,14 +320,16 @@ function submitRedemption(){
      appState.lastResultStatus="success";
      resetTargetTimeAfterResult();
      resultIcon.innerText="✓";resultIcon.style.color="#2e7d32";
-     resultTitle.innerText="兌換成功！";
+     resultTitle.innerText=appState.consumptionLimit===3.5?"兌換成功！你也太扯了！":"兌換成功！";
      resultBody.innerHTML=`兌換成功！<br>消耗時間：${formattedDuration}秒<br>準確度：100%`;
    }else if(!isCorrectCode&&!isTimeout){
      resultModal.style.display="none";
      document.getElementById("captcha-modal").style.display="flex";
      document.getElementById("error-msg-text").style.display="block";
      // 驗證碼錯誤需重試時，扣除第二次載入的 0.5 秒。
-     if(!appState.targetTimeEnabled)appState.startTime+=performance.now()-endTime;
+     const pausedMs=performance.now()-endTime;
+     if(!appState.targetTimeEnabled)appState.startTime+=pausedMs;
+     else appState.pausedSubmitMs+=pausedMs;
      return;
    }else{
      appState.lastResultStatus="fail";
