@@ -33,7 +33,7 @@ body{background:#f5f5f5;color:#333;display:flex;justify-content:center;align-ite
 .points-box{background:#f5f5f5;padding:12px;border-radius:8px;display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;font-weight:bold}
 .bottom-action-bar{padding:12px 16px;background:#fff;border-top:1px solid #eee;position:sticky;bottom:0}
 .action-btn{width:100%;padding:12px;border-radius:8px;border:none;font-size:16px;font-weight:bold;cursor:pointer;text-align:center}
-.action-btn.green{background:#14452F;color:#fff}.action-btn.gray{background:#ccc;color:#666;cursor:not-allowed}
+.action-btn.green{background:#14452F;color:#fff}.action-btn.gray{background:#ccc;color:#666;cursor:not-allowed}.action-btn:disabled{cursor:not-allowed}
 .modal-overlay{position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);display:none;justify-content:center;align-items:center;z-index:100}
 .modal-box{max-height:calc(100% - 20px);overflow-y:auto;background:#fff;width:90%;max-width:340px;border-radius:16px;padding:20px;display:flex;flex-direction:column;align-items:center;position:relative}
 .captcha-box{background:#fff;border:2px solid #14452F;color:#14452F;font-size:20px;font-weight:bold;padding:8px 20px;border-radius:8px;letter-spacing:4px;margin-bottom:12px}
@@ -98,12 +98,37 @@ body{min-height:0;align-items:stretch;background:#f9f9f9}
 .detail-content .bottom-action-bar{margin-top:auto;padding-top:26px;padding-bottom:0;flex-shrink:0}
 .detail-content .action-btn{min-height:48px}
 @media(max-height:680px){.detail-content .info-row{margin-bottom:10px}.detail-content .bottom-action-bar{padding-top:20px}}
+
+/* v1.0.5 — records leaderboard */
+.top-bar .my-points{cursor:pointer;touch-action:manipulation}
+.top-bar .my-points:active{opacity:.75}
+#page-records{height:100%;min-height:0;display:none;flex-direction:column;background:#f5f5f5}
+.records-body{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding:12px 14px 20px}
+.records-summary{display:flex;justify-content:space-between;background:#fff;border-radius:12px;padding:14px;margin-bottom:16px}
+.records-summary .metric-label{font-size:12px;color:#777}
+.records-summary .metric-value{font-size:23px;font-weight:700;color:#14452F;margin-top:3px}
+.records-heading{font-size:16px;color:#14452F;font-weight:700;margin-bottom:5px}
+.records-note{font-size:11px;color:#888;margin-bottom:12px}
+.records-table{background:#fff;border-radius:12px;padding:12px}
+.records-row{display:grid;grid-template-columns:minmax(0,1fr) 52px minmax(0,1fr);align-items:center;gap:4px;padding:10px 2px;border-bottom:1px solid #f0f0f0}
+.records-row:last-child{border-bottom:0}
+.records-head{padding:4px 2px 10px;border-bottom:1px solid #e5e5e5}
+.records-head span{font-size:12px;color:#777}
+.records-rank{display:flex;align-items:center;gap:5px;white-space:nowrap;font-size:16px;font-weight:500;color:#252525}
+.records-time{text-align:right;white-space:nowrap;font-size:16px;font-weight:500;color:#252525;font-variant-numeric:tabular-nums}
+.records-mode{text-align:center;font-size:10px;color:#999;font-variant-numeric:tabular-nums}
+.records-rank.gold,.records-time.gold{color:#c29200;font-weight:700}
+.records-rank.silver,.records-time.silver{color:#858c95;font-weight:700}
+.records-rank.bronze,.records-time.bronze{color:#b87333;font-weight:700}
+.records-medal{font-size:18px;line-height:1}
+.records-empty{padding:32px 4px;text-align:center;color:#888;font-size:14px}
+.records-footer{text-align:center;color:#888;font-size:11px;padding:12px 0}
 </style>
 </head>
 <body>
 <div class="phone-container">
 <div id="page-home" style="display:flex;flex-direction:column;height:100%">
-<div class="top-bar"><div style="display:flex;align-items:center;gap:7px"><div class="back-btn">←</div><span style="font-size:11px;opacity:.85">v1.0.4</span></div><div class="title">主頁</div><div class="my-points">我的點數</div></div>
+<div class="top-bar"><div style="display:flex;align-items:center;gap:7px"><div class="back-btn">←</div><span style="font-size:11px;opacity:.85">v1.0.5</span></div><div class="title">主頁</div><div class="my-points" role="button" tabindex="0" onclick="openRecords()">我的紀錄</div></div>
 <div class="header-info"><span>9/13Wing Stars 賽前簽名會</span><div class="clock-box" id="clock-trigger" title="點擊設定時間"><div id="live-time">12:59:52.83</div><div id="countdown-display" class="countdown-line" style="display:none"></div></div></div>
 <div class="content">
 <div class="banner-card">
@@ -115,8 +140,17 @@ body{min-height:0;align-items:stretch;background:#f9f9f9}
 <div class="item-card" onclick="goToDetail(1)"><div class="item-header"><img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'><rect width='200' height='200' fill='%23a5d6a7'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' font-size='16' fill='%2314452F'>簽名會主視覺</text></svg>" class="item-thumb" alt="thumb"><div class="item-info"><p style="font-weight:bold;color:#2e7d32">2026/09/08 (二)</p><h4>9/13 Wing Stars 賽前簽名會</h4></div></div></div>
 </div></div>
 
+<div id="page-records">
+<div class="top-bar"><div class="back-btn" onclick="closeRecords()">←</div><div class="title">我的紀錄</div><div style="width:20px"></div></div>
+<div class="records-body">
+<div class="records-summary"><div><div class="metric-label">成功兌換次數</div><div class="metric-value" id="records-total">0 次</div></div><div style="text-align:right"><div class="metric-label">最佳紀錄</div><div class="metric-value" id="records-best">—</div></div></div>
+<div class="records-heading">兌換速度排行榜</div><div class="records-note">若網站刷新或重開，所有紀錄將自動刪除</div>
+<div class="records-table"><div class="records-row records-head"><span>排名</span><span style="text-align:center">模式</span><span style="text-align:right">消耗秒數</span></div><div id="records-list"><div class="records-empty">目前尚無兌換成功紀錄</div></div></div>
+<div class="records-footer" id="records-footer">目前顯示 0 筆紀錄</div>
+</div></div>
+
 <div id="page-detail" class="detail-page">
-<div class="top-bar"><div class="back-btn" onclick="goBackHome()">←</div><div class="title" id="detail-nav-title">活動詳情</div><div class="my-points">我的點數</div></div>
+<div class="top-bar"><div class="back-btn" onclick="goBackHome()">←</div><div class="title" id="detail-nav-title">活動詳情</div><div class="my-points" role="button" tabindex="0" onclick="openRecords()">我的紀錄</div></div>
 <div class="loading-status" id="loading-status">正在刷新...</div>
 <div class="detail-content">
 <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='800' height='450' viewBox='0 0 800 450'><rect width='800' height='450' fill='%23c8e6c9'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' font-size='20' fill='%2314452F'>2026 Wing Stars 賽前簽名會</text></svg>" class="detail-img" alt="活動圖片">
@@ -146,7 +180,7 @@ body{min-height:0;align-items:stretch;background:#f9f9f9}
 <h3>搶票與計時設定</h3>
 <div><label>搶票時間設定 (可關閉)</label><select id="set-target-enabled"><option value="false">關閉搶票時間</option><option value="true">開啟搶票時間</option></select></div>
 <div id="target-time-inputs" style="display:none;margin-top:6px"><label>設定目標時間 (例: 2026/11/03 12:00:00)</label><input type="datetime-local" id="set-target-datetime" style="margin-top:4px"></div>
-<div><label>消耗時間限制 (預設5.5秒)</label><select id="set-consumption-limit"><option value="3.5">3.5秒超高速模式！</option><option value="4">4秒</option><option value="4.5">4.5秒</option><option value="5">5秒</option><option value="5.5" selected>5.5秒</option><option value="6">6秒</option><option value="6.5">6.5秒</option><option value="7">7秒</option><option value="7.5">7.5秒</option><option value="8">8秒</option></select></div>
+<div><label>消耗時間限制 (預設5.5秒)</label><select id="set-consumption-limit"><option value="3">3秒——地獄難度</option><option value="3.5">3.5秒——限定1人兌換</option><option value="4">4秒——限定10人兌換</option><option value="4.5">4.5秒——限定30人兌換</option><option value="5">5秒——限定50人兌換</option><option value="5.5" selected>5.5秒——預設難度</option><option value="6">6秒——限定100人兌換</option><option value="6.5">6.5秒——小朋友難度</option><option value="7">7秒——簡單難度</option><option value="7.5">7.5秒——無聊難度</option><option value="8">8秒——白痴難度</option></select></div>
 <button class="action-btn green" style="margin-top:8px" onclick="saveSettings()">儲存設定</button>
 </div></div>
 
@@ -161,7 +195,7 @@ body{min-height:0;align-items:stretch;background:#f9f9f9}
 let appState = {
 targetTimeEnabled:false,targetTimestamp:null,consumptionLimit:5.5,startTime:null,captchaLoadToken:0,pausedSubmitMs:0,
 currentCaptcha:"",inputCaptcha:"",captchaSecondsLeft:120,captchaTimer:null,
-selectedCardType:0,lastResultStatus:null,detailEntryAllowed:true,detailLoadToken:0,submitting:false
+selectedCardType:0,lastResultStatus:null,detailEntryAllowed:true,detailLoadToken:0,submitting:false,successfulRecords:[],recordsReturnPage:"page-home"
 };
 
 setInterval(()=>{
@@ -198,6 +232,7 @@ appState.consumptionLimit=parseFloat(document.getElementById("set-consumption-li
 document.getElementById("settings-modal").style.display="none";
 }
 function goToDetail(cardType){
+appState.lastResultStatus=null;
 appState.selectedCardType=cardType;
 appState.pausedSubmitMs=0;
 // 搶票時間在第一次假裝載入結束時才判斷。
@@ -225,12 +260,10 @@ setTimeout(()=>{
 if(detailLoadToken!==appState.detailLoadToken)return;
 loadingEl.style.display="none";actionBtn.style.display="block";
 requestAnimationFrame(updateScrollModes);
-if(appState.lastResultStatus==="success"){actionBtn.className="action-btn gray";actionBtn.innerText="已達兌換上限";}
-else if(appState.lastResultStatus==="fail"){actionBtn.className="action-btn gray";actionBtn.innerText="已被兌換完畢";}
-else{actionBtn.className="action-btn green";actionBtn.innerText="立即兌換";}
+actionBtn.className="action-btn green";actionBtn.innerText="立即兌換";
 appState.detailEntryAllowed=!(appState.targetTimeEnabled&&appState.targetTimestamp!==null&&Date.now()<appState.targetTimestamp);
-if(!appState.detailEntryAllowed){actionBtn.className="action-btn gray";actionBtn.innerText="未到達時間不可兌換";actionBtn.onclick=null;}
-else{actionBtn.onclick=openCaptchaModal;}
+if(!appState.detailEntryAllowed){actionBtn.className="action-btn gray";actionBtn.innerText="未到達時間不可兌換";actionBtn.onclick=null;actionBtn.disabled=true;}
+else{actionBtn.onclick=openCaptchaModal;actionBtn.disabled=false;}
 },loadTime);
 }
 function goBackHome(){
@@ -242,7 +275,7 @@ appState.lastResultStatus=null;
 }
 let isFirstOpenCaptcha=true;
 function openCaptchaModal(){
-if(!appState.detailEntryAllowed)return;
+if(!appState.detailEntryAllowed||appState.lastResultStatus!==null||document.getElementById("main-action-btn").disabled||appState.submitting)return;
 if(appState.targetTimeEnabled&&appState.targetTimestamp!==null){
   if(Date.now()<appState.targetTimestamp)return;
   appState.startTime=null; // 有設定時間時，以設定的絕對時間計算，不從點擊時重新計時。
@@ -360,7 +393,7 @@ else{if(appState.inputCaptcha.length<6){appState.inputCaptcha+=key;}}
 document.getElementById("captcha-input").value=appState.inputCaptcha;
 }
 function submitRedemption(){
- if(appState.submitting)return;
+ if(appState.submitting||appState.lastResultStatus!==null||!appState.detailEntryAllowed)return;
  const submitBtn=document.getElementById("modal-submit-btn");
  if(submitBtn.classList.contains("disabled")||!appState.currentCaptcha)return;
  // 在按下確認按鈕的瞬間凍結計時；後續 0.5 秒不計入消耗時間。
@@ -389,9 +422,10 @@ function submitRedemption(){
    resultModal.style.display="flex";
    if(isCorrectCode&&!isTimeout){
      appState.lastResultStatus="success";
+     appState.successfulRecords.push({centiseconds:Math.round(durationSec*100),mode:appState.consumptionLimit});
      resetTargetTimeAfterResult();
      resultIcon.innerText="✓";resultIcon.style.color="#2e7d32";
-     resultTitle.innerText=appState.consumptionLimit===3.5?"兌換成功！你也太扯了！":"兌換成功！";
+     resultTitle.innerText=(appState.consumptionLimit===3||appState.consumptionLimit===3.5)?"兌換成功！你也太扯了！":"兌換成功！";
      resultBody.innerHTML=`兌換成功！<br>消耗時間：${formattedDuration}秒<br>準確度：100%`;
    }else if(!isCorrectCode&&!isTimeout){
      resultModal.style.display="none";
@@ -427,8 +461,52 @@ document.getElementById("set-target-enabled").value="false";
 document.getElementById("target-time-inputs").style.display="none";
 }
 function resultConfirmAction(){
-document.getElementById("result-modal").style.display="none";
-goToDetail(appState.selectedCardType);
+ document.getElementById("result-modal").style.display="none";
+ // Keep the existing detail page; no new loading animation and no re-entry.
+ const btn=document.getElementById("main-action-btn");
+ btn.style.display="block";
+ btn.className="action-btn gray";
+ btn.innerText=appState.lastResultStatus==="success"?"已達兌換上限":"已被兌換完畢";
+ btn.disabled=true;
+ btn.onclick=null;
+ document.getElementById("loading-status").style.display="none";
+ requestAnimationFrame(updateScrollModes);
+}
+function openRecords(){
+ const home=document.getElementById("page-home");
+ const detail=document.getElementById("page-detail");
+ appState.recordsReturnPage=detail.style.display==="flex"?"page-detail":"page-home";
+ home.style.display="none";
+ detail.style.display="none";
+ document.getElementById("page-records").style.display="flex";
+ renderRecords();
+ document.querySelector(".records-body").scrollTop=0;
+}
+function closeRecords(){
+ document.getElementById("page-records").style.display="none";
+ document.getElementById(appState.recordsReturnPage).style.display="flex";
+ requestAnimationFrame(updateScrollModes);
+}
+function renderRecords(){
+ const all=appState.successfulRecords;
+ const sorted=[...all].sort((a,b)=>a.centiseconds-b.centiseconds).slice(0,20);
+ document.getElementById("records-total").textContent=all.length+" 次";
+ document.getElementById("records-best").textContent=sorted.length?(sorted[0].centiseconds/100).toFixed(2)+" 秒":"—";
+ const list=document.getElementById("records-list");
+ list.replaceChildren();
+ if(!sorted.length){const empty=document.createElement("div");empty.className="records-empty";empty.textContent="目前尚無兌換成功紀錄";list.appendChild(empty);}
+ sorted.forEach((record,i)=>{
+  const rank=sorted.findIndex(item=>item.centiseconds===record.centiseconds)+1;
+  const color=rank===1?"gold":rank===2?"silver":rank===3?"bronze":"";
+  const row=document.createElement("div");row.className="records-row";
+  const rankEl=document.createElement("div");rankEl.className="records-rank "+color;
+  if(rank<=3){const medal=document.createElement("span");medal.className="records-medal";medal.textContent=rank===1?"🥇":rank===2?"🥈":"🥉";rankEl.appendChild(medal);}
+  const label=document.createElement("span");label.textContent="第 "+rank+" 名";rankEl.appendChild(label);
+  const mode=document.createElement("span");mode.className="records-mode";mode.textContent="("+record.mode+")";
+  const time=document.createElement("span");time.className="records-time "+color;time.textContent=(record.centiseconds/100).toFixed(2)+" 秒";
+  row.append(rankEl,mode,time);list.appendChild(row);
+ });
+ document.getElementById("records-footer").textContent=all.length>20?"僅顯示最快的 20 筆紀錄":"目前顯示 "+sorted.length+" 筆紀錄";
 }
 function resultHomeAction(){
 document.getElementById("result-modal").style.display="none";
