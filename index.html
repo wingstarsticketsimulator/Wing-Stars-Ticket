@@ -138,12 +138,23 @@ body{min-height:0;align-items:stretch;background:#f9f9f9}
 .option-row label{flex:1;font-size:14px;font-weight:600;color:#14452F}
 .settings-box .option-row select{width:76px;flex-shrink:0}
 .option-help{font-size:11px;color:#888;line-height:1.5;margin-top:-6px}
+/* v1.0.8 */
+.records-filter{width:105px;max-width:100%;padding:5px 7px;border:1px solid #d5ddd7;border-radius:6px;background:white;color:#14452F;font-size:12px;margin-bottom:7px}
+.records-mode.blank{visibility:hidden}
+#captcha-modal.authentic-exit .modal-box{opacity:0;transition:opacity .35s ease}
+#captcha-modal.authentic-exit{background:transparent;transition:background .35s ease}
+.virtual-keyboard.authentic-exit{transform:translateY(110%);transition:transform .35s ease-in,visibility 0s linear .35s}
+#authentic-loading{display:none;position:absolute;inset:0;z-index:350;background:rgba(0,0,0,.5);align-items:flex-end;justify-content:center}
+#authentic-loading .authentic-sheet{width:100%;background:white;border-radius:14px 14px 0 0;padding:40px 22px calc(38px + env(safe-area-inset-bottom,0px));min-height:245px;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;transform:translateY(0)}
+#authentic-loading.leaving .authentic-sheet{transform:translateY(110%);transition:transform .25s ease-in}
+#result-modal.authentic-fade{animation:authentic-result-in .15s ease-out both}
+@keyframes authentic-result-in{from{opacity:0}to{opacity:1}}
 </style>
 </head>
 <body>
 <div class="phone-container">
 <div id="page-home" style="display:flex;flex-direction:column;height:100%">
-<div class="top-bar"><div style="display:flex;align-items:center;gap:7px"><div class="back-btn">←</div><span style="font-size:11px;opacity:.85">v1.0.7</span></div><button class="home-options-trigger" onclick="openOptions()">設定</button><div class="my-points" role="button" tabindex="0" onclick="openRecords()">我的紀錄</div></div>
+<div class="top-bar"><div style="display:flex;align-items:center;gap:7px"><div class="back-btn">←</div><span style="font-size:11px;opacity:.85">v1.0.8</span></div><button class="home-options-trigger" onclick="openOptions()">設定</button><div class="my-points" role="button" tabindex="0" onclick="openRecords()">我的紀錄</div></div>
 <div class="header-info"><span>9/13Wing Stars 賽前簽名會</span><div class="clock-box" id="clock-trigger" title="點擊設定時間"><div id="live-time">12:59:52.83</div><div id="countdown-display" class="countdown-line" style="display:none"></div></div></div>
 <div class="content">
 <div class="banner-card">
@@ -158,7 +169,7 @@ body{min-height:0;align-items:stretch;background:#f9f9f9}
 <div id="page-records">
 <div class="top-bar"><div class="back-btn" onclick="closeRecords()">←</div><div class="title">我的紀錄</div><div style="width:20px"></div></div>
 <div class="records-body">
-<div class="records-summary"><div><div class="metric-label">成功兌換次數</div><div class="metric-value" id="records-total">0 次</div></div><div style="text-align:right"><div class="metric-label">最佳紀錄</div><div class="metric-value" id="records-best">—</div></div></div>
+<div class="records-summary"><div><div class="metric-label">成功兌換次數</div><div class="metric-value" id="records-total">0 次</div></div><div style="text-align:right"><select id="records-filter" class="records-filter" aria-label="紀錄難度篩選" onchange="renderRecords()"><option value="all">全部</option><option value="3">3秒</option><option value="3.5">3.5秒</option><option value="4">4秒</option><option value="4.5">4.5秒</option><option value="5">5秒</option><option value="5.5">5.5秒</option><option value="6">6秒</option><option value="6.5">6.5秒</option><option value="7">7秒</option><option value="7.5">7.5秒</option><option value="8">8秒</option></select><div class="metric-label">最佳紀錄</div><div class="metric-value" id="records-best">—</div></div></div>
 <div class="records-heading">兌換速度排行榜</div><div class="records-note">若網站刷新或重開，所有紀錄將自動刪除</div>
 <div class="records-table"><div class="records-row records-head"><span>排名</span><span style="text-align:center">模式</span><span style="text-align:right">消耗秒數</span></div><div id="records-list"><div class="records-empty">目前尚無兌換成功紀錄</div></div></div>
 <div class="records-footer" id="records-footer">目前顯示 0 筆紀錄</div>
@@ -197,6 +208,8 @@ body{min-height:0;align-items:stretch;background:#f9f9f9}
 <div class="option-help">開啟此功能，數字鍵盤將自動跳出，無需手動點擊</div>
 <div class="option-row"><label for="option-elapsed">顯示消耗時間</label><select id="option-elapsed"><option value="false" selected>關</option><option value="true">開</option></select></div>
 <div class="option-help">開啟後，在活動詳情頁時鐘下方顯示消耗秒數與挑戰模式</div>
+<div class="option-row"><label for="option-authentic">更貼近正版</label><select id="option-authentic"><option value="false" selected>關</option><option value="true">開</option></select></div>
+<div class="option-help">開啟後，兌換時模擬正版網站的載入畫面與轉場動畫</div>
 <button class="action-btn green" onclick="saveOptions()">儲存設定</button>
 <button class="action-btn gray" onclick="closeOptions()">取消</button>
 </div></div>
@@ -208,6 +221,7 @@ body{min-height:0;align-items:stretch;background:#f9f9f9}
 <button class="action-btn green" style="margin-top:8px" onclick="saveSettings()">儲存設定</button>
 </div></div>
 
+<div id="authentic-loading" aria-live="polite"><div class="authentic-sheet"><div style="font-size:26px;font-weight:700;color:#111">Loading 忙碌中</div><div style="font-size:14px;line-height:1.7;color:#888">您的兌換申請正在確認中。為確保作業成功，請暫留在此畫面，稍候即可完成。</div></div></div>
 <div class="modal-overlay" id="result-modal" style="z-index:400"><div class="modal-box">
 <div id="result-icon" style="font-size:36px;margin-bottom:8px">✓</div><div class="modal-title" id="result-title" style="font-size:18px;margin-bottom:12px">兌換成功！</div>
 <div id="result-body" style="font-size:14px;text-align:center;line-height:1.6;margin-bottom:20px">消耗時間：2.35秒<br>準確度：100%</div>
@@ -219,7 +233,7 @@ body{min-height:0;align-items:stretch;background:#f9f9f9}
 let appState = {
 targetTimeEnabled:false,targetTimestamp:null,consumptionLimit:5.5,startTime:null,captchaLoadToken:0,pausedSubmitMs:0,
 currentCaptcha:"",inputCaptcha:"",captchaSecondsLeft:120,captchaTimer:null,
-selectedCardType:0,lastResultStatus:null,detailEntryAllowed:true,detailLoadToken:0,submitting:false,autoKeyboard:false,showElapsed:false,frozenDuration:null,elapsedResultConfirmed:false,successfulRecords:[],recordsReturnPage:"page-home"
+selectedCardType:0,lastResultStatus:null,detailEntryAllowed:true,detailLoadToken:0,submitting:false,autoKeyboard:false,showElapsed:false,authenticMode:false,usedCaptchas:new Set(),frozenDuration:null,elapsedResultConfirmed:false,successfulRecords:[],recordsReturnPage:"page-home"
 };
 
 setInterval(()=>{
@@ -257,11 +271,12 @@ else{appState.targetTimestamp=new Date().getTime()+10000;}
 appState.consumptionLimit=parseFloat(document.getElementById("set-consumption-limit").value);
 document.getElementById("settings-modal").style.display="none";
 }
-function openOptions(){document.getElementById("option-keyboard").value=String(appState.autoKeyboard);document.getElementById("option-elapsed").value=String(appState.showElapsed);document.getElementById("options-modal").style.display="flex";}
+function openOptions(){document.getElementById("option-keyboard").value=String(appState.autoKeyboard);document.getElementById("option-elapsed").value=String(appState.showElapsed);document.getElementById("option-authentic").value=String(appState.authenticMode);document.getElementById("options-modal").style.display="flex";}
 function closeOptions(){document.getElementById("options-modal").style.display="none";}
 function saveOptions(){
  appState.autoKeyboard=document.getElementById("option-keyboard").value==="true";
  appState.showElapsed=document.getElementById("option-elapsed").value==="true";
+ appState.authenticMode=document.getElementById("option-authentic").value==="true";
  closeOptions();
  updateElapsedDisplay();
 }
@@ -381,7 +396,8 @@ function isValidCaptcha(s){
 }
 function makeValidCaptcha(){
  let code;
- do{code=String(Math.floor(100000+Math.random()*900000));}while(!isValidCaptcha(code));
+ do{code=String(Math.floor(100000+Math.random()*900000));}while(!isValidCaptcha(code)||appState.usedCaptchas.has(code));
+ appState.usedCaptchas.add(code);
  if(!isValidCaptcha(code))throw new Error("Invalid generated captcha");
  return code;
 }
@@ -475,7 +491,18 @@ function submitRedemption(){
  const isCorrectCode=(appState.inputCaptcha===appState.currentCaptcha);
  const isTimeout=durationSec>appState.consumptionLimit;
  appState.submitting=true;
- hideVirtualKeyboard();
+ const authenticFinal=appState.authenticMode&&(isTimeout||isCorrectCode);
+ if(authenticFinal){
+   const captcha=document.getElementById("captcha-modal");
+   captcha.classList.add("authentic-exit");
+   virtualKeyboard.classList.add("authentic-exit");
+   // Start both exits together, even if the keyboard was already hidden.
+   hideVirtualKeyboard();
+   setTimeout(()=>{captcha.style.display="none";captcha.classList.remove("authentic-exit");virtualKeyboard.classList.remove("authentic-exit");},350);
+   setTimeout(()=>{document.getElementById("authentic-loading").style.display="flex";},500);
+   setTimeout(()=>{document.getElementById("authentic-loading").classList.add("leaving");},850);
+   setTimeout(()=>{document.getElementById("authentic-loading").style.display="none";document.getElementById("authentic-loading").classList.remove("leaving");},1100);
+ }else{hideVirtualKeyboard();}
  submitBtn.className="modal-btn submit processing";
  submitBtn.innerHTML='<span class="submit-spinner" role="status" aria-label="兌換處理中"></span>';
  submitBtn.disabled=true;
@@ -489,7 +516,7 @@ function submitRedemption(){
    const resultIcon=document.getElementById("result-icon");
    const resultTitle=document.getElementById("result-title");
    const resultBody=document.getElementById("result-body");
-   resultModal.style.display="flex";
+   if(!authenticFinal)resultModal.style.display="flex";
    if(isCorrectCode&&!isTimeout){
      appState.lastResultStatus="success";
      appState.successfulRecords.push({centiseconds:Math.round(durationSec*100),mode:appState.consumptionLimit});
@@ -521,7 +548,14 @@ requestAnimationFrame(positionCaptcha);
      }
      resultBody.innerHTML=`兌換失敗！<br><span style="color:red;">消耗時間：${formattedDuration}秒（設定時間：${appState.consumptionLimit}秒）</span><br>準確度：${accuracy}%`;
    }
- },500);
+ },authenticFinal?1600:500);
+ if(authenticFinal){
+   setTimeout(()=>{
+     document.getElementById("result-modal").classList.add("authentic-fade");
+     document.getElementById("result-modal").style.display="flex";
+   },1600);
+   setTimeout(()=>document.getElementById("result-modal").classList.remove("authentic-fade"),1750);
+ }
 }
 
 function resetTargetTimeAfterResult(){
@@ -552,6 +586,7 @@ function openRecords(){
  home.style.display="none";
  detail.style.display="none";
  document.getElementById("page-records").style.display="flex";
+ document.getElementById("records-filter").value="all";
  renderRecords();
  document.querySelector(".records-body").scrollTop=0;
 }
@@ -561,13 +596,14 @@ function closeRecords(){
  requestAnimationFrame(updateScrollModes);
 }
 function renderRecords(){
- const all=appState.successfulRecords;
+ const filter=document.getElementById("records-filter").value;
+ const all=appState.successfulRecords.filter(record=>filter==="all"||String(record.mode)===filter);
  const sorted=[...all].sort((a,b)=>a.centiseconds-b.centiseconds).slice(0,20);
  document.getElementById("records-total").textContent=all.length+" 次";
  document.getElementById("records-best").textContent=sorted.length?(sorted[0].centiseconds/100).toFixed(2)+" 秒":"—";
  const list=document.getElementById("records-list");
  list.replaceChildren();
- if(!sorted.length){const empty=document.createElement("div");empty.className="records-empty";empty.textContent="目前尚無兌換成功紀錄";list.appendChild(empty);}
+ if(!sorted.length){const empty=document.createElement("div");empty.className="records-empty";empty.textContent=filter==="all"?"目前尚無兌換成功紀錄":"此難度尚無兌換成功紀錄";list.appendChild(empty);}
  sorted.forEach((record,i)=>{
   const rank=sorted.findIndex(item=>item.centiseconds===record.centiseconds)+1;
   const color=rank===1?"gold":rank===2?"silver":rank===3?"bronze":"";
@@ -575,7 +611,7 @@ function renderRecords(){
   const rankEl=document.createElement("div");rankEl.className="records-rank "+color;
   if(rank<=3){const medal=document.createElement("span");medal.className="records-medal";medal.textContent=rank===1?"🥇":rank===2?"🥈":"🥉";rankEl.appendChild(medal);}
   const label=document.createElement("span");label.textContent="第 "+rank+" 名";rankEl.appendChild(label);
-  const mode=document.createElement("span");mode.className="records-mode";mode.textContent="("+record.mode+")";
+  const mode=document.createElement("span");mode.className="records-mode";mode.textContent=filter==="all"?"("+record.mode+")":"";if(filter!=="all")mode.classList.add("blank");
   const time=document.createElement("span");time.className="records-time "+color;time.textContent=(record.centiseconds/100).toFixed(2)+" 秒";
   row.append(rankEl,mode,time);list.appendChild(row);
  });
