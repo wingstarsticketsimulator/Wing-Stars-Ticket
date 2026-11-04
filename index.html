@@ -123,12 +123,27 @@ body{min-height:0;align-items:stretch;background:#f9f9f9}
 .records-medal{font-size:18px;line-height:1}
 .records-empty{padding:32px 4px;text-align:center;color:#888;font-size:14px}
 .records-footer{text-align:center;color:#888;font-size:11px;padding:12px 0}
+
+/* Center detail title independently of the different-width back arrow and clock. */
+#page-detail>.top-bar{position:relative}
+#detail-nav-title{position:absolute;left:50%;transform:translateX(-50%);white-space:nowrap;pointer-events:none}
+#page-detail>.top-bar .detail-clock{margin-left:auto}
+/* v1.0.7 options and detail clock */
+.home-options-trigger{border:0;background:rgba(255,255,255,.14);color:white;border-radius:6px;padding:6px 15px;font-size:14px;font-weight:600;cursor:pointer}
+.detail-clock{font-size:12px;text-align:right;white-space:nowrap;line-height:1.35;font-variant-numeric:tabular-nums;min-width:116px;pointer-events:none}
+#detail-elapsed{font-size:10px;color:#fff;white-space:nowrap}
+#detail-elapsed.elapsed-success{color:#79ed91;font-weight:700}
+#detail-elapsed.elapsed-fail{color:#ff8585;font-weight:700}
+.option-row{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.option-row label{flex:1;font-size:14px;font-weight:600;color:#14452F}
+.settings-box .option-row select{width:76px;flex-shrink:0}
+.option-help{font-size:11px;color:#888;line-height:1.5;margin-top:-6px}
 </style>
 </head>
 <body>
 <div class="phone-container">
 <div id="page-home" style="display:flex;flex-direction:column;height:100%">
-<div class="top-bar"><div style="display:flex;align-items:center;gap:7px"><div class="back-btn">←</div><span style="font-size:11px;opacity:.85">v1.0.6</span></div><div class="title">主頁</div><div class="my-points" role="button" tabindex="0" onclick="openRecords()">我的紀錄</div></div>
+<div class="top-bar"><div style="display:flex;align-items:center;gap:7px"><div class="back-btn">←</div><span style="font-size:11px;opacity:.85">v1.0.7</span></div><button class="home-options-trigger" onclick="openOptions()">設定</button><div class="my-points" role="button" tabindex="0" onclick="openRecords()">我的紀錄</div></div>
 <div class="header-info"><span>9/13Wing Stars 賽前簽名會</span><div class="clock-box" id="clock-trigger" title="點擊設定時間"><div id="live-time">12:59:52.83</div><div id="countdown-display" class="countdown-line" style="display:none"></div></div></div>
 <div class="content">
 <div class="banner-card">
@@ -150,7 +165,7 @@ body{min-height:0;align-items:stretch;background:#f9f9f9}
 </div></div>
 
 <div id="page-detail" class="detail-page">
-<div class="top-bar"><div class="back-btn" onclick="goBackHome()">←</div><div class="title" id="detail-nav-title">活動詳情</div><div class="my-points" role="button" tabindex="0" onclick="openRecords()">我的紀錄</div></div>
+<div class="top-bar"><div class="back-btn" onclick="goBackHome()">←</div><div class="title" id="detail-nav-title">活動詳情</div><div class="detail-clock" aria-label="目前時間"><div id="detail-live-time">00:00:00.00</div><div id="detail-elapsed" style="display:none"></div></div></div>
 <div class="loading-status" id="loading-status">正在刷新...</div>
 <div class="detail-content">
 <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='800' height='450' viewBox='0 0 800 450'><rect width='800' height='450' fill='%23c8e6c9'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' font-size='20' fill='%2314452F'>2026 Wing Stars 賽前簽名會</text></svg>" class="detail-img" alt="活動圖片">
@@ -176,6 +191,15 @@ body{min-height:0;align-items:stretch;background:#f9f9f9}
 <div class="vk-key" data-key="1">1</div><div class="vk-key" data-key="2">2</div><div class="vk-key" data-key="3">3</div><div class="vk-key" data-key="4">4</div><div class="vk-key" data-key="5">5</div><div class="vk-key" data-key="6">6</div><div class="vk-key" data-key="7">7</div><div class="vk-key" data-key="8">8</div><div class="vk-key" data-key="9">9</div><div class="vk-spacer" aria-hidden="true"></div><div class="vk-key" data-key="0">0</div><div class="vk-key" data-key="backspace">←</div>
 </div></div>
 
+<div class="settings-modal" id="options-modal"><div class="settings-box">
+<h3>設定</h3>
+<div class="option-row"><label for="option-keyboard">數字鍵盤自動彈出</label><select id="option-keyboard"><option value="false" selected>關</option><option value="true">開</option></select></div>
+<div class="option-help">開啟此功能，數字鍵盤將自動跳出，無需手動點擊</div>
+<div class="option-row"><label for="option-elapsed">顯示消耗時間</label><select id="option-elapsed"><option value="false" selected>關</option><option value="true">開</option></select></div>
+<div class="option-help">開啟後，在活動詳情頁時鐘下方顯示消耗秒數與挑戰模式</div>
+<button class="action-btn green" onclick="saveOptions()">儲存設定</button>
+<button class="action-btn gray" onclick="closeOptions()">取消</button>
+</div></div>
 <div class="settings-modal" id="settings-modal"><div class="settings-box">
 <h3>搶票與計時設定</h3>
 <div><label>搶票時間設定 (可關閉)</label><select id="set-target-enabled"><option value="false">關閉搶票時間</option><option value="true">開啟搶票時間</option></select></div>
@@ -195,13 +219,15 @@ body{min-height:0;align-items:stretch;background:#f9f9f9}
 let appState = {
 targetTimeEnabled:false,targetTimestamp:null,consumptionLimit:5.5,startTime:null,captchaLoadToken:0,pausedSubmitMs:0,
 currentCaptcha:"",inputCaptcha:"",captchaSecondsLeft:120,captchaTimer:null,
-selectedCardType:0,lastResultStatus:null,detailEntryAllowed:true,detailLoadToken:0,submitting:false,successfulRecords:[],recordsReturnPage:"page-home"
+selectedCardType:0,lastResultStatus:null,detailEntryAllowed:true,detailLoadToken:0,submitting:false,autoKeyboard:false,showElapsed:false,frozenDuration:null,elapsedResultConfirmed:false,successfulRecords:[],recordsReturnPage:"page-home"
 };
 
 setInterval(()=>{
 const now=new Date();
 const timeStr=now.toTimeString().split(" ")[0]+"."+String(now.getMilliseconds()).padStart(3,"0").slice(0,2);
 document.getElementById("live-time").innerText=timeStr;
+document.getElementById("detail-live-time").innerText=timeStr;
+updateElapsedDisplay();
 if(appState.targetTimeEnabled&&appState.targetTimestamp){
 const diff=appState.targetTimestamp-now.getTime();
 const cdDisplay=document.getElementById("countdown-display");
@@ -231,16 +257,42 @@ else{appState.targetTimestamp=new Date().getTime()+10000;}
 appState.consumptionLimit=parseFloat(document.getElementById("set-consumption-limit").value);
 document.getElementById("settings-modal").style.display="none";
 }
+function openOptions(){document.getElementById("option-keyboard").value=String(appState.autoKeyboard);document.getElementById("option-elapsed").value=String(appState.showElapsed);document.getElementById("options-modal").style.display="flex";}
+function closeOptions(){document.getElementById("options-modal").style.display="none";}
+function saveOptions(){
+ appState.autoKeyboard=document.getElementById("option-keyboard").value==="true";
+ appState.showElapsed=document.getElementById("option-elapsed").value==="true";
+ closeOptions();
+ updateElapsedDisplay();
+}
+function currentElapsedSeconds(){
+ if(appState.frozenDuration!==null)return appState.frozenDuration;
+ if(appState.targetTimeEnabled&&appState.targetTimestamp!==null)
+   return Math.max(0,(Date.now()-appState.targetTimestamp-appState.pausedSubmitMs)/1000);
+ if(appState.startTime===null)return 0;
+ return Math.max(0,(performance.now()-appState.startTime)/1000);
+}
+function updateElapsedDisplay(){
+ const el=document.getElementById("detail-elapsed");
+ if(!appState.showElapsed||document.getElementById("page-detail").style.display!=="flex"){el.style.display="none";return;}
+ el.style.display="block";
+ const seconds=currentElapsedSeconds();
+ el.textContent="消耗秒數 "+seconds.toFixed(2)+" 秒 ("+appState.consumptionLimit+")";
+ el.className=appState.elapsedResultConfirmed?(appState.lastResultStatus==="success"?"elapsed-success":"elapsed-fail"):"";
+}
 function goToDetail(cardType){
 isFirstOpenCaptcha=true;
 appState.lastResultStatus=null;
 appState.selectedCardType=cardType;
 appState.pausedSubmitMs=0;
+appState.frozenDuration=null;
+appState.elapsedResultConfirmed=false;
 // 搶票時間在第一次假裝載入結束時才判斷。
 const detailLoadToken=++appState.detailLoadToken;
 document.getElementById("page-home").style.display="none";
 document.getElementById("page-detail").style.display="flex";
 requestAnimationFrame(updateScrollModes);
+updateElapsedDisplay();
 if(cardType===0){
 document.getElementById("detail-main-title").innerText="9/13 Wing Stars 賽前簽名會 (鷹國皇家會員專屬)";
 document.getElementById("detail-nav-title").innerText="活動詳情";
@@ -274,6 +326,8 @@ document.getElementById("page-detail").style.display="none";
 document.getElementById("page-home").style.display="flex";
 requestAnimationFrame(updateScrollModes);
 appState.lastResultStatus=null;
+appState.frozenDuration=null;
+appState.elapsedResultConfirmed=false;
 }
 let isFirstOpenCaptcha=true;
 function openCaptchaModal(){
@@ -284,6 +338,7 @@ if(appState.targetTimeEnabled&&appState.targetTimestamp!==null){
 }
 document.getElementById("captcha-modal").style.display="flex";
 requestAnimationFrame(positionCaptcha);
+if(appState.autoKeyboard)showVirtualKeyboard();
 document.getElementById("captcha-input").value="";
 appState.inputCaptcha="";
 appState.currentCaptcha="";
@@ -320,12 +375,14 @@ function isValidCaptcha(s){
  let pairs=0;
  for(let i=1;i<s.length;i++)if(s[i]===s[i-1])pairs++;
  if(pairs>1)return false;
+ for(let i=2;i<s.length;i++)if(s[i]===s[i-1]&&s[i-1]===s[i-2])return false;
  if(Object.values(counts).includes(3)&&pairs>0)return false;
  return true;
 }
 function makeValidCaptcha(){
  let code;
  do{code=String(Math.floor(100000+Math.random()*900000));}while(!isValidCaptcha(code));
+ if(!isValidCaptcha(code))throw new Error("Invalid generated captcha");
  return code;
 }
 function generateNewCaptcha(){
@@ -412,6 +469,8 @@ function submitRedemption(){
  const durationSec=(appState.targetTimeEnabled&&appState.targetTimestamp!==null)
    ? Math.max(0,(Date.now()-appState.targetTimestamp-appState.pausedSubmitMs)/1000)
    : (endTime-appState.startTime)/1000;
+ appState.frozenDuration=durationSec;
+ updateElapsedDisplay();
  const formattedDuration=durationSec.toFixed(2);
  const isCorrectCode=(appState.inputCaptcha===appState.currentCaptcha);
  const isTimeout=durationSec>appState.consumptionLimit;
@@ -445,6 +504,7 @@ function submitRedemption(){
 requestAnimationFrame(positionCaptcha);
      // 驗證碼錯誤需重試時，扣除第二次載入的 0.5 秒。
      const pausedMs=performance.now()-endTime;
+     appState.frozenDuration=null;
      if(!appState.targetTimeEnabled)appState.startTime+=pausedMs;
      else appState.pausedSubmitMs+=pausedMs;
      return;
@@ -480,6 +540,8 @@ function resultConfirmAction(){
  btn.innerText=appState.lastResultStatus==="success"?"已達兌換上限":"已被兌換完畢";
  btn.disabled=true;
  btn.onclick=null;
+ appState.elapsedResultConfirmed=true;
+ updateElapsedDisplay();
  document.getElementById("loading-status").style.display="none";
  requestAnimationFrame(updateScrollModes);
 }
