@@ -61,6 +61,12 @@ body{background:#f5f5f5;color:#333;display:flex;justify-content:center;align-ite
 .settings-box h3{font-size:16px;color:#14452F;margin-bottom:4px}.settings-box label{font-size:13px;color:#555}
 .settings-box select,.settings-box input{width:100%;padding:8px;border:1px solid #ccc;border-radius:6px;font-size:14px}
 
+/* v1.1.0 — extreme challenge indicator and button-only adjustment */
+.filter-bar{justify-content:space-between;gap:8px;min-height:28px}
+.filter-bar>span{margin-left:auto;white-space:nowrap}
+.challenge-stats{align-items:center;gap:5px;background:#fff3b0;border:1px solid #e4bb37;color:#674900;border-radius:7px;padding:5px 7px;font-size:clamp(10px,2.6vw,12px);font-weight:650;white-space:nowrap}
+.challenge-stats button{background:transparent;border:0;color:#674900;font-size:19px;font-weight:700;line-height:1;cursor:pointer;padding:0 2px;touch-action:manipulation}
+#page-detail.raise-action #main-action-btn{transform:translateY(-34px)}
 /* v1.0.4 — Chrome-first viewport and content-aware scrolling */
 html,body{width:100%;height:100%;overflow:hidden;overscroll-behavior:none}
 body{min-height:0;align-items:stretch;background:#f9f9f9}
@@ -154,14 +160,14 @@ body{min-height:0;align-items:stretch;background:#f9f9f9}
 <body>
 <div class="phone-container">
 <div id="page-home" style="display:flex;flex-direction:column;height:100%">
-<div class="top-bar"><div style="display:flex;align-items:center;gap:7px"><div class="back-btn">←</div><span style="font-size:11px;opacity:.85">v1.0.9</span></div><button class="home-options-trigger" onclick="openOptions()">設定</button><div class="my-points" role="button" tabindex="0" onclick="openRecords()">我的紀錄</div></div>
+<div class="top-bar"><div style="display:flex;align-items:center;gap:7px"><div class="back-btn">←</div><span style="font-size:11px;opacity:.85">v1.1.0</span></div><button class="home-options-trigger" onclick="openOptions()">設定</button><div class="my-points" role="button" tabindex="0" onclick="openRecords()">我的紀錄</div></div>
 <div class="header-info"><span>9/13Wing Stars 賽前簽名會</span><div class="clock-box" id="clock-trigger" title="點擊設定時間"><div id="live-time">12:59:52.83</div><div id="countdown-display" class="countdown-line" style="display:none"></div></div></div>
 <div class="content">
 <div class="banner-card">
 <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='800' height='450' viewBox='0 0 800 450'><rect width='800' height='450' fill='%2314452F'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' font-size='24' fill='%23ffffff'>Wing Stars 橫向大合照 (不可按)</text></svg>" class="banner-img" alt="banner">
 <div class="banner-text"><div class="banner-title">9/13Wing Stars 賽前簽名會</div><p>參加方式：APP點數兌換60點 (單一帳號僅限兌換一次)<br>•9/8 (二) 12：00起開放兌換鷹國皇家會員，共10個名額，換完為止...</p></div><div class="see-more">查看更詳細 ∨</div>
 </div>
-<div class="filter-bar"><span>日期舊到新 ↕</span></div>
+<div class="filter-bar"><div id="challenge-stats" class="challenge-stats" style="display:none"><span>挑戰成功次數：<span id="challenge-success">0</span>/<span id="challenge-total">0</span></span><button type="button" id="challenge-reset" aria-label="重整目前模式挑戰統計" title="重整目前模式挑戰統計" onclick="resetChallengeStats()">↻</button></div><span>日期舊到新 ↕</span></div>
 <div class="item-card" onclick="goToDetail(0)"><div class="item-tag">鷹國皇家</div><div class="item-header"><img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'><rect width='200' height='200' fill='%23a5d6a7'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' font-size='16' fill='%2314452F'>簽名會主視覺</text></svg>" class="item-thumb" alt="thumb"><div class="item-info"><p style="font-weight:bold;color:#2e7d32">2026/09/08 (二)</p><h4>9/13 Wing Stars 賽前簽名會 (鷹國皇家會員專屬)</h4></div></div></div>
 <div class="item-card" onclick="goToDetail(1)"><div class="item-header"><img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'><rect width='200' height='200' fill='%23a5d6a7'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' font-size='16' fill='%2314452F'>簽名會主視覺</text></svg>" class="item-thumb" alt="thumb"><div class="item-info"><p style="font-weight:bold;color:#2e7d32">2026/09/08 (二)</p><h4>9/13 Wing Stars 賽前簽名會</h4></div></div></div>
 </div></div>
@@ -208,6 +214,8 @@ body{min-height:0;align-items:stretch;background:#f9f9f9}
 <div class="option-help">開啟此功能，數字鍵盤將自動跳出，無需手動點擊</div>
 <div class="option-row"><label for="option-elapsed">顯示消耗時間</label><select id="option-elapsed"><option value="false" selected>關</option><option value="true">開</option></select></div>
 <div class="option-help">開啟後，在活動詳情頁時鐘下方顯示消耗秒數與挑戰模式</div>
+<div class="option-row"><label for="option-raise-action">立即兌換按鍵上移</label><select id="option-raise-action"><option value="false" selected>關</option><option value="true">開</option></select></div>
+<div class="option-help">僅將活動詳情頁底部的立即兌換按鍵上移，不改動其他文字與間距</div>
 <div class="option-row"><label for="option-authentic">更貼近正版</label><select id="option-authentic"><option value="false" selected>關</option><option value="true">開</option></select></div>
 <div class="option-help">開啟後，兌換時模擬正版網站的載入畫面與轉場動畫</div>
 <div class="option-row"><label for="option-error">錯誤</label><select id="option-error"><option value="false" selected>關</option><option value="true">開</option></select></div>
@@ -242,7 +250,7 @@ body{min-height:0;align-items:stretch;background:#f9f9f9}
 let appState = {
 targetTimeEnabled:false,targetTimestamp:null,consumptionLimit:5.5,startTime:null,captchaLoadToken:0,pausedSubmitMs:0,
 currentCaptcha:"",inputCaptcha:"",captchaSecondsLeft:120,captchaTimer:null,
-selectedCardType:0,lastResultStatus:null,detailEntryAllowed:true,detailLoadToken:0,submitting:false,autoKeyboard:false,showElapsed:false,authenticMode:false,authenticPreference:false,errorMode:false,errorChance:1,tolerance:0,errorOccurred:false,pendingErrorRetryCaptcha:false,usedCaptchas:new Set(),frozenDuration:null,elapsedResultConfirmed:false,successfulRecords:[],recordsReturnPage:"page-home"
+selectedCardType:0,lastResultStatus:null,detailEntryAllowed:true,detailLoadToken:0,submitting:false,autoKeyboard:false,showElapsed:false,raiseAction:false,challengeStats:{"3":{success:0,total:0},"3.5":{success:0,total:0}},authenticMode:false,authenticPreference:false,errorMode:false,errorChance:1,tolerance:0,errorOccurred:false,pendingErrorRetryCaptcha:false,usedCaptchas:new Set(),frozenDuration:null,elapsedResultConfirmed:false,successfulRecords:[],recordsReturnPage:"page-home"
 };
 
 setInterval(()=>{
@@ -268,6 +276,24 @@ document.getElementById("settings-modal").style.display="flex";
 document.getElementById("set-target-enabled").addEventListener("change",e=>{
 document.getElementById("target-time-inputs").style.display=e.target.value==="true"?"block":"none";
 });
+function updateChallengeStats(){
+ const mode=String(appState.consumptionLimit);
+ const data=appState.challengeStats[mode];
+ const box=document.getElementById("challenge-stats");
+ box.style.display=data?"flex":"none";
+ if(data){document.getElementById("challenge-success").textContent=data.success;document.getElementById("challenge-total").textContent=data.total;}
+}
+function resetChallengeStats(){
+ const data=appState.challengeStats[String(appState.consumptionLimit)];
+ if(data){data.success=0;data.total=0;updateChallengeStats();}
+}
+function recordChallengeResult(success){
+ const data=appState.challengeStats[String(appState.consumptionLimit)];
+ if(!data)return;
+ data.total++;if(success)data.success++;
+ updateChallengeStats();
+}
+updateChallengeStats();
 function saveSettings(){
 const enabled=document.getElementById("set-target-enabled").value==="true";
 appState.targetTimeEnabled=enabled;
@@ -277,7 +303,8 @@ const dtVal=document.getElementById("set-target-datetime").value;
 if(dtVal){appState.targetTimestamp=new Date(dtVal).getTime();}
 else{appState.targetTimestamp=new Date().getTime()+10000;}
 }
-appState.consumptionLimit=parseFloat(document.getElementById("set-consumption-limit").value);
+ appState.consumptionLimit=parseFloat(document.getElementById("set-consumption-limit").value);
+ updateChallengeStats();
 document.getElementById("settings-modal").style.display="none";
 }
 let optionsAuthenticBeforeError=false;
@@ -304,6 +331,7 @@ document.getElementById("option-tolerance").addEventListener("change",()=>syncOp
 function openOptions(){
  document.getElementById("option-keyboard").value=String(appState.autoKeyboard);
  document.getElementById("option-elapsed").value=String(appState.showElapsed);
+ document.getElementById("option-raise-action").value=String(appState.raiseAction);
  document.getElementById("option-authentic").value=String(appState.authenticMode);
  document.getElementById("option-error").value=String(appState.errorMode);
  document.getElementById("option-error-chance").value=String(appState.errorChance);
@@ -315,6 +343,8 @@ function closeOptions(){document.getElementById("options-modal").style.display="
 function saveOptions(){
  appState.autoKeyboard=document.getElementById("option-keyboard").value==="true";
  appState.showElapsed=document.getElementById("option-elapsed").value==="true";
+ appState.raiseAction=document.getElementById("option-raise-action").value==="true";
+ document.getElementById("page-detail").classList.toggle("raise-action",appState.raiseAction);
  appState.authenticMode=document.getElementById("option-authentic").value==="true";
  appState.errorMode=document.getElementById("option-error").value==="true";
  appState.errorChance=Number(document.getElementById("option-error-chance").value);
@@ -322,6 +352,7 @@ function saveOptions(){
  appState.tolerance=Number(document.getElementById("option-tolerance").value);
  closeOptions();updateElapsedDisplay();
 }
+function effectiveTimeLimit(){return appState.consumptionLimit+(appState.authenticMode?0:appState.tolerance);}
 function currentElapsedSeconds(){
  if(appState.frozenDuration!==null)return appState.frozenDuration;
  if(appState.targetTimeEnabled&&appState.targetTimestamp!==null)
@@ -539,8 +570,11 @@ function submitRedemption(){
  const networkError=(appState.errorMode&&!appState.errorOccurred&&isCorrectCode)
    ?(()=>{const roll=Math.random();const half=appState.errorChance/200;return roll<half?"HTTP 429":roll<2*half?"client error":null;})():null;
  appState.submitting=true;
- if(!networkError){appState.frozenDuration=durationSec;updateElapsedDisplay();}
- const authenticFinal=appState.authenticMode&&(isTimeout||isCorrectCode||!!networkError);
+ // Standard mode ends on timeout even if the captcha is wrong. Authentic mode
+ // keeps showing captcha errors until the correct code is submitted.
+ const finalSubmission=isCorrectCode||(!appState.authenticMode&&isTimeout);
+ if(finalSubmission&&!networkError){appState.frozenDuration=durationSec;updateElapsedDisplay();}
+ const authenticFinal=appState.authenticMode&&isCorrectCode;
  if(authenticFinal){
    const captcha=document.getElementById("captcha-modal");
    captcha.classList.add("authentic-exit");virtualKeyboard.classList.add("authentic-exit");hideVirtualKeyboard();
@@ -578,6 +612,7 @@ function submitRedemption(){
    if(isCorrectCode&&!isTimeout){
      appState.lastResultStatus="success";
      appState.successfulRecords.push({centiseconds:Math.round(durationSec*100),mode:appState.consumptionLimit});
+     recordChallengeResult(true);
      resetTargetTimeAfterResult();
      resultIcon.innerText="✓";resultIcon.style.color="#2e7d32";
      resultTitle.innerText=(appState.consumptionLimit===3||appState.consumptionLimit===3.5)?"兌換成功！你也太扯了！":"兌換成功！";
@@ -586,18 +621,18 @@ function submitRedemption(){
        ?`<span style="color:#222;">消耗時間：${formattedDuration}秒（設定時間：${appState.consumptionLimit}+${tolerance.toFixed(2)}秒）</span>`
        :`消耗時間：${formattedDuration}秒`;
      resultBody.innerHTML=`兌換成功！<br>${timeText}<br>準確度：100%`;
-   }else if(!isCorrectCode&&!isTimeout){
+   }else if(!isCorrectCode&&(appState.authenticMode||!isTimeout)){
      resultModal.style.display="none";
      document.getElementById("captcha-modal").style.display="flex";
      document.getElementById("error-msg-text").style.display="block";
      requestAnimationFrame(positionCaptcha);
-     const pausedMs=performance.now()-endTime;
+     // Keep the original start timestamp unchanged during processing and wrong-code feedback.
      appState.frozenDuration=null;
-     if(!appState.targetTimeEnabled)appState.startTime+=pausedMs;
-     else appState.pausedSubmitMs+=pausedMs;
+     updateElapsedDisplay();
      return;
    }else{
-     appState.lastResultStatus="fail";resetTargetTimeAfterResult();
+     appState.frozenDuration=durationSec;
+     appState.lastResultStatus="fail";recordChallengeResult(false);resetTargetTimeAfterResult();
      resultIcon.innerText="✕";resultIcon.style.color="red";
      resultTitle.innerText=appState.authenticMode?"很抱歉，品項已兌換完畢":"兌換失敗！";
      let accuracy=100;
