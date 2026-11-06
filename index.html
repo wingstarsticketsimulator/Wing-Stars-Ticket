@@ -61,7 +61,7 @@ body{background:#f5f5f5;color:#333;display:flex;justify-content:center;align-ite
 .settings-box h3{font-size:16px;color:#14452F;margin-bottom:4px}.settings-box label{font-size:13px;color:#555}
 .settings-box select,.settings-box input{width:100%;padding:8px;border:1px solid #ccc;border-radius:6px;font-size:14px}
 
-/* v1.1.0 — extreme challenge indicator and button-only adjustment */
+/* v1.1.1 — extreme challenge indicator and button-only adjustment */
 .filter-bar{justify-content:space-between;gap:8px;min-height:28px}
 .filter-bar>span{margin-left:auto;white-space:nowrap}
 .challenge-stats{align-items:center;gap:5px;background:#fff3b0;border:1px solid #e4bb37;color:#674900;border-radius:7px;padding:5px 7px;font-size:clamp(10px,2.6vw,12px);font-weight:650;white-space:nowrap}
@@ -155,19 +155,26 @@ body{min-height:0;align-items:stretch;background:#f9f9f9}
 #authentic-loading.leaving .authentic-sheet{transform:translateY(110%);transition:transform .25s ease-in}
 #result-modal.authentic-fade{animation:authentic-result-in .15s ease-out both}
 @keyframes authentic-result-in{from{opacity:0}to{opacity:1}}
+/* v1.1.1 — short home difficulty hint without layout shift */
+.header-info{position:relative}
+/* Anchor hint to the clock itself; countdown width changes move it automatically. */
+#clock-trigger{position:relative;flex-shrink:0}
+#difficulty-hint{position:absolute;right:calc(100% + 8px);top:50%;transform:translateY(-50%);color:#fff;font-size:10px;line-height:1;white-space:nowrap;pointer-events:none;opacity:0;z-index:1}
+#difficulty-hint.play{animation:difficulty-hint-fade 1.5s ease-out both}
+@keyframes difficulty-hint-fade{0%,66.666%{opacity:1}100%{opacity:0}}
 </style>
 </head>
 <body>
 <div class="phone-container">
 <div id="page-home" style="display:flex;flex-direction:column;height:100%">
-<div class="top-bar"><div style="display:flex;align-items:center;gap:7px"><div class="back-btn">←</div><span style="font-size:11px;opacity:.85">v1.1.0</span></div><button class="home-options-trigger" onclick="openOptions()">設定</button><div class="my-points" role="button" tabindex="0" onclick="openRecords()">我的紀錄</div></div>
-<div class="header-info"><span>9/13Wing Stars 賽前簽名會</span><div class="clock-box" id="clock-trigger" title="點擊設定時間"><div id="live-time">12:59:52.83</div><div id="countdown-display" class="countdown-line" style="display:none"></div></div></div>
+<div class="top-bar"><div style="display:flex;align-items:center;gap:7px"><div class="back-btn">←</div><span style="font-size:11px;opacity:.85">v1.1.1</span></div><button class="home-options-trigger" onclick="openOptions()">設定</button><div class="my-points" role="button" tabindex="0" onclick="openRecords()">我的紀錄</div></div>
+<div class="header-info"><span>9/13Wing Stars 賽前簽名會</span><div class="clock-box" id="clock-trigger" title="點擊設定時間"><span id="difficulty-hint" aria-hidden="true">點擊調整難度→</span><div id="live-time">12:59:52.83</div><div id="countdown-display" class="countdown-line" style="display:none"></div></div></div>
 <div class="content">
 <div class="banner-card">
 <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='800' height='450' viewBox='0 0 800 450'><rect width='800' height='450' fill='%2314452F'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' font-size='24' fill='%23ffffff'>Wing Stars 橫向大合照 (不可按)</text></svg>" class="banner-img" alt="banner">
 <div class="banner-text"><div class="banner-title">9/13Wing Stars 賽前簽名會</div><p>參加方式：APP點數兌換60點 (單一帳號僅限兌換一次)<br>•9/8 (二) 12：00起開放兌換鷹國皇家會員，共10個名額，換完為止...</p></div><div class="see-more">查看更詳細 ∨</div>
 </div>
-<div class="filter-bar"><div id="challenge-stats" class="challenge-stats" style="display:none"><span>挑戰成功次數：<span id="challenge-success">0</span>/<span id="challenge-total">0</span></span><button type="button" id="challenge-reset" aria-label="重整目前模式挑戰統計" title="重整目前模式挑戰統計" onclick="resetChallengeStats()">↻</button></div><span>日期舊到新 ↕</span></div>
+<div class="filter-bar"><div id="challenge-stats" class="challenge-stats" style="display:none"><span>挑戰成功次數：<span id="challenge-success">0</span>/<span id="challenge-total">0</span><span id="challenge-rate">（0%）</span></span><button type="button" id="challenge-reset" aria-label="重整目前模式挑戰統計" title="重整目前模式挑戰統計" onclick="resetChallengeStats()">↻</button></div><span>日期舊到新 ↕</span></div>
 <div class="item-card" onclick="goToDetail(0)"><div class="item-tag">鷹國皇家</div><div class="item-header"><img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'><rect width='200' height='200' fill='%23a5d6a7'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' font-size='16' fill='%2314452F'>簽名會主視覺</text></svg>" class="item-thumb" alt="thumb"><div class="item-info"><p style="font-weight:bold;color:#2e7d32">2026/09/08 (二)</p><h4>9/13 Wing Stars 賽前簽名會 (鷹國皇家會員專屬)</h4></div></div></div>
 <div class="item-card" onclick="goToDetail(1)"><div class="item-header"><img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'><rect width='200' height='200' fill='%23a5d6a7'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' font-size='16' fill='%2314452F'>簽名會主視覺</text></svg>" class="item-thumb" alt="thumb"><div class="item-info"><p style="font-weight:bold;color:#2e7d32">2026/09/08 (二)</p><h4>9/13 Wing Stars 賽前簽名會</h4></div></div></div>
 </div></div>
@@ -212,8 +219,10 @@ body{min-height:0;align-items:stretch;background:#f9f9f9}
 <h3>設定</h3>
 <div class="option-row"><label for="option-keyboard">數字鍵盤自動彈出</label><select id="option-keyboard"><option value="false" selected>關</option><option value="true">開</option></select></div>
 <div class="option-help">開啟此功能，數字鍵盤將自動跳出，無需手動點擊</div>
-<div class="option-row"><label for="option-elapsed">顯示消耗時間</label><select id="option-elapsed"><option value="false" selected>關</option><option value="true">開</option></select></div>
+<div class="option-row"><label for="option-elapsed">顯示消耗時間</label><select id="option-elapsed"><option value="false">關</option><option value="true" selected>開</option></select></div>
 <div class="option-help">開啟後，在活動詳情頁時鐘下方顯示消耗秒數與挑戰模式</div>
+<div class="option-row"><label for="option-challenge-stats">顯示挑戰成功次數</label><select id="option-challenge-stats"><option value="false" selected>關</option><option value="true">開</option></select></div>
+<div class="option-help">3秒、3.5秒強制顯示；其他秒數可自行開啟或關閉，各難度獨立統計。</div>
 <div class="option-row"><label for="option-raise-action">立即兌換按鍵上移</label><select id="option-raise-action"><option value="false" selected>關</option><option value="true">開</option></select></div>
 <div class="option-help">僅將活動詳情頁底部的立即兌換按鍵上移，不改動其他文字與間距</div>
 <div class="option-row"><label for="option-authentic">更貼近正版</label><select id="option-authentic"><option value="false" selected>關</option><option value="true">開</option></select></div>
@@ -250,7 +259,7 @@ body{min-height:0;align-items:stretch;background:#f9f9f9}
 let appState = {
 targetTimeEnabled:false,targetTimestamp:null,consumptionLimit:5.5,startTime:null,captchaLoadToken:0,pausedSubmitMs:0,
 currentCaptcha:"",inputCaptcha:"",captchaSecondsLeft:120,captchaTimer:null,
-selectedCardType:0,lastResultStatus:null,detailEntryAllowed:true,detailLoadToken:0,submitting:false,autoKeyboard:false,showElapsed:false,raiseAction:false,challengeStats:{"3":{success:0,total:0},"3.5":{success:0,total:0}},authenticMode:false,authenticPreference:false,errorMode:false,errorChance:1,tolerance:0,errorOccurred:false,pendingErrorRetryCaptcha:false,usedCaptchas:new Set(),frozenDuration:null,elapsedResultConfirmed:false,successfulRecords:[],recordsReturnPage:"page-home"
+selectedCardType:0,lastResultStatus:null,detailEntryAllowed:true,detailLoadToken:0,submitting:false,autoKeyboard:false,showElapsed:true,raiseAction:false,showChallengeStats:false,challengeStats:Object.fromEntries([3,3.5,4,4.5,5,5.5,6,6.5,7,7.5,8].map(n=>[String(n),{success:0,total:0}])),authenticMode:false,authenticPreference:false,errorMode:false,errorChance:1,tolerance:0,errorOccurred:false,pendingErrorRetryCaptcha:false,usedCaptchas:new Set(),frozenDuration:null,elapsedResultConfirmed:false,successfulRecords:[],recordsReturnPage:"page-home"
 };
 
 setInterval(()=>{
@@ -280,8 +289,8 @@ function updateChallengeStats(){
  const mode=String(appState.consumptionLimit);
  const data=appState.challengeStats[mode];
  const box=document.getElementById("challenge-stats");
- box.style.display=data?"flex":"none";
- if(data){document.getElementById("challenge-success").textContent=data.success;document.getElementById("challenge-total").textContent=data.total;}
+ box.style.display=data&&(Number(mode)<=3.5||appState.showChallengeStats)?"flex":"none";
+ if(data){document.getElementById("challenge-success").textContent=data.success;document.getElementById("challenge-total").textContent=data.total;document.getElementById("challenge-rate").textContent="（"+(data.total?Number((data.success/data.total*100).toFixed(2)):0)+"%）";}
 }
 function resetChallengeStats(){
  const data=appState.challengeStats[String(appState.consumptionLimit)];
@@ -294,9 +303,20 @@ function recordChallengeResult(success){
  updateChallengeStats();
 }
 updateChallengeStats();
+function playDifficultyHint(){
+ const el=document.getElementById("difficulty-hint");
+ el.classList.remove("play");
+ if(appState.targetTimeEnabled){el.style.opacity="0";return;}
+ el.style.opacity="";
+ void el.offsetWidth;
+ el.classList.add("play");
+}
+playDifficultyHint();
 function saveSettings(){
 const enabled=document.getElementById("set-target-enabled").value==="true";
 appState.targetTimeEnabled=enabled;
+const hint=document.getElementById("difficulty-hint");
+if(enabled){hint.classList.remove("play");hint.style.opacity="0";}
 appState.targetTimestamp=null;
 if(enabled){
 const dtVal=document.getElementById("set-target-datetime").value;
@@ -305,6 +325,7 @@ else{appState.targetTimestamp=new Date().getTime()+10000;}
 }
  appState.consumptionLimit=parseFloat(document.getElementById("set-consumption-limit").value);
  updateChallengeStats();
+ syncChallengeStatsOption();
 document.getElementById("settings-modal").style.display="none";
 }
 let optionsAuthenticBeforeError=false;
@@ -331,6 +352,8 @@ document.getElementById("option-tolerance").addEventListener("change",()=>syncOp
 function openOptions(){
  document.getElementById("option-keyboard").value=String(appState.autoKeyboard);
  document.getElementById("option-elapsed").value=String(appState.showElapsed);
+ document.getElementById("option-challenge-stats").value=String(appState.showChallengeStats);
+ syncChallengeStatsOption();
  document.getElementById("option-raise-action").value=String(appState.raiseAction);
  document.getElementById("option-authentic").value=String(appState.authenticMode);
  document.getElementById("option-error").value=String(appState.errorMode);
@@ -339,10 +362,18 @@ function openOptions(){
  optionsAuthenticBeforeError=appState.errorMode?appState.authenticPreference:appState.authenticMode;
  syncOptions("open");document.getElementById("options-modal").style.display="flex";
 }
+function syncChallengeStatsOption(){
+ const forced=appState.consumptionLimit<=3.5;
+ const el=document.getElementById("option-challenge-stats");
+ el.disabled=forced;
+ if(forced)el.value="true";
+}
 function closeOptions(){document.getElementById("options-modal").style.display="none";}
 function saveOptions(){
  appState.autoKeyboard=document.getElementById("option-keyboard").value==="true";
  appState.showElapsed=document.getElementById("option-elapsed").value==="true";
+ if(appState.consumptionLimit>3.5)appState.showChallengeStats=document.getElementById("option-challenge-stats").value==="true";
+ updateChallengeStats();
  appState.raiseAction=document.getElementById("option-raise-action").value==="true";
  document.getElementById("page-detail").classList.toggle("raise-action",appState.raiseAction);
  appState.authenticMode=document.getElementById("option-authentic").value==="true";
@@ -414,6 +445,7 @@ isFirstOpenCaptcha=true;
 appState.detailLoadToken++;
 document.getElementById("page-detail").style.display="none";
 document.getElementById("page-home").style.display="flex";
+playDifficultyHint();
 requestAnimationFrame(updateScrollModes);
 appState.lastResultStatus=null;
 appState.frozenDuration=null;
