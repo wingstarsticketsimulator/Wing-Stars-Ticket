@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Wing Stars 賽前簽名會搶票模擬器</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-tap-highlight-color:transparent;user-select:none}
+body{background:#f5f5f5;color:#333;display:flex;justify-content:center;align-items:center;min-height:100vh}
+.phone-container{width:100%;max-width:450px;height:100vh;max-height:900px;background:#fff;display:flex;flex-direction:column;position:relative;overflow-y:auto;box-shadow:0 4px 20px rgba(0,0,0,.1)}
+@media(min-width:451px){.phone-container{border-radius:36px;border:10px solid #222;height:840px}}
+.top-bar{background:#14452F;color:#fff;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:10}
+.top-bar .back-btn{font-size:20px;cursor:pointer}.top-bar .title{font-size:16px;font-weight:500}.top-bar .my-points{font-size:14px}
+.header-info{background:#14452F;color:#fff;padding:0 16px 12px;display:flex;justify-content:space-between;align-items:center;font-size:13px}
+.clock-box{background:rgba(0,0,0,.3);padding:4px 8px;border-radius:6px;cursor:pointer;text-align:right}.clock-box:hover{background:rgba(0,0,0,.5)}
+.countdown-line{color:#ffeb3b;font-weight:bold;font-size:12px}
+.content{padding:16px;flex:1;background:#f9f9f9}
+.banner-card{background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.05);margin-bottom:16px}
+.banner-img{width:100%;height:auto;display:block;aspect-ratio:16/9;object-fit:cover;background:#14452F}
+.banner-text{padding:12px;font-size:14px;line-height:1.5}.banner-title{font-size:16px;font-weight:bold;color:#14452F;margin-bottom:8px}
+.see-more{text-align:center;color:#666;font-size:13px;padding:8px 0;border-top:1px solid #eee}
+.filter-bar{display:flex;justify-content:flex-end;align-items:center;margin-bottom:12px;font-size:13px;color:#666}
+.item-card{background:#fff;border-radius:12px;padding:12px;margin-bottom:12px;box-shadow:0 2px 6px rgba(0,0,0,.05);cursor:pointer;display:flex;flex-direction:column;gap:8px;border:1px solid #eee;transition:transform .1s}
+.item-card:active{transform:scale(.98)}.item-header{display:flex;gap:12px;align-items:center}
+.item-thumb{width:70px;height:70px;border-radius:8px;object-fit:cover;background:#a5d6a7}
+.item-info h4{font-size:14px;color:#14452F;margin-bottom:4px}.item-info p{font-size:13px;color:#555}
+.item-tag{background:#e8f5e9;color:#2e7d32;padding:2px 6px;border-radius:4px;font-size:11px;align-self:flex-start}
+.detail-page{display:none;flex-direction:column;height:100%;background:#fff}
+.loading-status{text-align:center;padding:8px;font-size:12px;color:#666;background:#fff3e0}
+.detail-content{padding:16px;flex:1;overflow-y:auto}
+.detail-img{width:100%;aspect-ratio:16/9;border-radius:12px;margin-bottom:16px;object-fit:cover;background:#c8e6c9}
+.info-row{margin-bottom:12px;font-size:14px}.info-label{color:#666;font-size:12px;margin-bottom:2px}.info-value{font-weight:500;color:#333}
+.points-box{background:#f5f5f5;padding:12px;border-radius:8px;display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;font-weight:bold}
+.bottom-action-bar{padding:12px 16px;background:#fff;border-top:1px solid #eee;position:sticky;bottom:0}
+.action-btn{width:100%;padding:12px;border-radius:8px;border:none;font-size:16px;font-weight:bold;cursor:pointer;text-align:center}
+.action-btn.green{background:#14452F;color:#fff}.action-btn.gray{background:#ccc;color:#666;cursor:not-allowed}.action-btn:disabled{cursor:not-allowed}
+.modal-overlay{position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);display:none;justify-content:center;align-items:center;z-index:100}
+.modal-box{max-height:calc(100% - 20px);overflow-y:auto;background:#fff;width:90%;max-width:340px;border-radius:16px;padding:20px;display:flex;flex-direction:column;align-items:center;position:relative}
+.captcha-box{background:#fff;border:2px solid #14452F;color:#14452F;font-size:20px;font-weight:bold;padding:8px 20px;border-radius:8px;letter-spacing:4px;margin-bottom:12px}
+.modal-title{font-size:16px;font-weight:bold;margin-bottom:4px}.modal-desc{font-size:12px;color:#666;margin-bottom:16px;text-align:center}
+.captcha-input-container{width:100%;display:flex;align-items:center;border:1px solid #ccc;border-radius:8px;padding:8px 12px;margin-bottom:8px;cursor:pointer}
+.captcha-input{width:100%;border:none;outline:none;font-size:16px;letter-spacing:2px;background:transparent;pointer-events:none}
+.refresh-row{width:100%;display:flex;justify-content:space-between;align-items:center;gap:6px;font-size:11px;color:#14452F;margin-bottom:16px;min-height:18px}.refresh-right{margin-left:auto;display:flex;align-items:center;justify-content:flex-end;gap:5px;white-space:nowrap}.refresh-btn{white-space:nowrap}
+.error-msg{color:#d62828;font-size:11px;white-space:nowrap;display:none}
+.refresh-btn{cursor:pointer;display:flex;align-items:center;gap:2px}
+.modal-buttons{display:flex;gap:12px;width:100%}.modal-btn{flex:1;padding:10px;border-radius:8px;border:1px solid #14452F;font-size:14px;font-weight:bold;cursor:pointer;text-align:center}
+.modal-btn.submit.processing{background:#a8dfb8;border-color:#a8dfb8;color:#14452F;cursor:wait}
+.submit-spinner{display:inline-block;width:18px;height:18px;border:3px solid rgba(20,69,47,.2);border-top-color:#14452F;border-radius:50%;animation:submit-spin .65s linear infinite;vertical-align:middle}
+@keyframes submit-spin{to{transform:rotate(360deg)}}
+.modal-btn.cancel{background:#fff;color:#14452F}.modal-btn.submit{background:#14452F;color:#fff}.modal-btn.submit.disabled{background:#ccc;border-color:#ccc;cursor:not-allowed}
+.virtual-keyboard{position:absolute;bottom:0;left:0;width:100%;background:#e0e0e0;padding:5px 10px calc(14px + env(safe-area-inset-bottom, 0px));display:flex;flex-direction:column;gap:4px;z-index:200;border-top-left-radius:12px;border-top-right-radius:12px;box-shadow:0 -4px 10px rgba(0,0,0,.1);transform:translateY(105%);visibility:hidden;pointer-events:none;transition:transform .15s ease-out,visibility 0s linear .15s}
+.virtual-keyboard.open{transform:translateY(0);visibility:visible;pointer-events:auto;transition:transform .15s ease-out,visibility 0s}
+.vk-top{display:flex;justify-content:space-between;padding:2px 7px;font-size:12px;color:#666;min-height:24px;align-items:center}.vk-top span{cursor:pointer;color:#007aff;font-weight:bold}
+.vk-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}.vk-key{background:#fff;padding:9px 0;text-align:center;border-radius:6px;font-size:18px;font-weight:bold;cursor:pointer;box-shadow:0 1px 2px rgba(0,0,0,.1);user-select:none;min-height:39px}.vk-key:active{background:#b0b0b0}
+#captcha-modal{padding:12px 0;transition:padding-bottom .15s ease-out}
+#captcha-modal.keyboard-visible{padding-bottom:var(--keyboard-height, 270px)}
+#captcha-modal .modal-box{transform:translateY(-18px)}
+.captcha-loading-spinner{display:inline-block;width:22px;height:22px;border:3px solid #cde6d3;border-top-color:#14452F;border-radius:50%;animation:submit-spin .65s linear infinite;vertical-align:middle}
+.settings-modal{position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);display:none;justify-content:center;align-items:center;z-index:300}
+.settings-box{background:#fff;width:85%;padding:20px;border-radius:12px;display:flex;flex-direction:column;gap:12px}
+.settings-box h3{font-size:16px;color:#14452F;margin-bottom:4px}.settings-box label{font-size:13px;color:#555}
+.settings-box select,.settings-box input{width:100%;padding:8px;border:1px solid #ccc;border-radius:6px;font-size:14px}
+
+/* v1.1.1 — extreme challenge indicator and button-only adjustment */
+.filter-bar{justify-content:space-between;gap:8px;min-height:28px}
+.filter-bar>span{margin-left:auto;white-space:nowrap}
+.challenge-stats{align-items:center;gap:5px;background:#fff3b0;border:1px solid #e4bb37;color:#674900;border-radius:7px;padding:5px 7px;font-size:clamp(10px,2.6vw,12px);font-weight:650;white-space:nowrap}
+.challenge-stats button{background:transparent;border:0;color:#674900;font-size:19px;font-weight:700;line-height:1;cursor:pointer;padding:0 2px;touch-action:manipulation}
+#page-detail.raise-action #main-action-btn{transform:translateY(-34px)}
+/* v1.0.4 — Chrome-first viewport and content-aware scrolling */
+html,body{width:100%;height:100%;overflow:hidden;overscroll-behavior:none}
+body{min-height:0;align-items:stretch;background:#f9f9f9}
+.phone-container{height:var(--app-height,100dvh);max-height:none;min-height:0;overflow:hidden;overscroll-behavior:none}
+#page-home,#page-detail{height:100%;min-height:0;overflow:hidden}
+#page-home>.content{min-height:0;flex:1 1 auto;overflow-y:hidden;overscroll-behavior-y:contain;scrollbar-width:none}
+#page-home>.content::-webkit-scrollbar{display:none}
+#page-home>.content.can-scroll{overflow-y:auto;-webkit-overflow-scrolling:touch}
+#page-home .item-card:last-child{margin-bottom:0}
+.detail-page{min-height:0}
+.detail-content{min-height:0;flex:1 1 auto;overflow-y:hidden;overscroll-behavior-y:contain;padding:12px 16px 10px;scrollbar-width:none}
+.detail-content::-webkit-scrollbar{display:none}
+.detail-content.can-scroll{overflow-y:auto;-webkit-overflow-scrolling:touch}
+.detail-img{aspect-ratio:16/8.3;margin-bottom:12px}
+.detail-content h3{margin-bottom:9px!important}
+.points-box{margin-bottom:12px;padding:10px 12px}
+.info-row{margin-bottom:9px;font-size:13px;line-height:1.25}
+.info-label{margin-bottom:2px}
+.bottom-action-bar{position:static;padding:8px 0 4px;border:0;background:transparent}
+.action-btn{padding:11px}
+#captcha-modal{padding:0;align-items:flex-start;transition:none}
+#captcha-modal .modal-box{position:absolute;top:var(--captcha-top,120px);left:50%;transform:translateX(-50%);max-height:calc(100% - var(--captcha-top,120px) - 8px);overflow-y:auto}
+#captcha-modal.keyboard-visible{padding-bottom:0}
+.virtual-keyboard{padding:7px 10px calc(18px + env(safe-area-inset-bottom,0px));gap:6px}
+.vk-top{min-height:30px;font-size:13px}
+.vk-grid{gap:6px}
+.vk-key{height:48px;min-height:48px;padding:11px 0;font-size:20px;touch-action:manipulation}
+@media(max-height:680px){.detail-img{aspect-ratio:16/6}.detail-content{padding-top:8px}.info-row{margin-bottom:7px}.vk-key{height:42px;min-height:42px}}
+@media(min-width:451px){.phone-container{height:min(840px,var(--app-height,100dvh));max-height:none}}
+
+/* v1.0.4 layout refinement: relaxed details, bottom-aligned action */
+.detail-content{display:flex;flex-direction:column;padding-bottom:14px}
+.detail-content .info-row{margin-bottom:13px;line-height:1.38}
+.detail-content .info-label{margin-bottom:3px}
+.detail-content .bottom-action-bar{margin-top:auto;padding-top:26px;padding-bottom:0;flex-shrink:0}
+.detail-content .action-btn{min-height:48px}
+@media(max-height:680px){.detail-content .info-row{margin-bottom:10px}.detail-content .bottom-action-bar{padding-top:20px}}
+
+/* v1.0.5 — records leaderboard */
+.top-bar .my-points{cursor:pointer;touch-action:manipulation}
+.top-bar .my-points:active{opacity:.75}
+#page-records{height:100%;min-height:0;display:none;flex-direction:column;background:#f5f5f5}
+.records-body{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding:12px 14px 20px}
+.records-summary{display:flex;justify-content:space-between;background:#fff;border-radius:12px;padding:14px;margin-bottom:16px}
+.records-summary .metric-label{font-size:12px;color:#777}
+.records-summary .metric-value{font-size:23px;font-weight:700;color:#14452F;margin-top:3px}
+.records-heading{font-size:16px;color:#14452F;font-weight:700;margin-bottom:5px}
+.records-note{font-size:11px;color:#888;margin-bottom:12px}
+.records-table{background:#fff;border-radius:12px;padding:12px}
+.records-row{display:grid;grid-template-columns:minmax(0,1fr) 52px minmax(0,1fr);align-items:center;gap:4px;padding:10px 2px;border-bottom:1px solid #f0f0f0}
+.records-row:last-child{border-bottom:0}
+.records-head{padding:4px 2px 10px;border-bottom:1px solid #e5e5e5}
+.records-head span{font-size:12px;color:#777}
+.records-rank{display:flex;align-items:center;gap:5px;white-space:nowrap;font-size:16px;font-weight:500;color:#252525}
+.records-time{text-align:right;white-space:nowrap;font-size:16px;font-weight:500;color:#252525;font-variant-numeric:tabular-nums}
+.records-mode{text-align:center;font-size:10px;color:#999;font-variant-numeric:tabular-nums}
+.records-rank.gold,.records-time.gold{color:#c29200;font-weight:700}
+.records-rank.silver,.records-time.silver{color:#858c95;font-weight:700}
+.records-rank.bronze,.records-time.bronze{color:#b87333;font-weight:700}
+.records-medal{font-size:18px;line-height:1}
+.records-empty{padding:32px 4px;text-align:center;color:#888;font-size:14px}
+.records-footer{text-align:center;color:#888;font-size:11px;padding:12px 0}
+
+/* Center detail title independently of the different-width back arrow and clock. */
+#page-detail>.top-bar{position:relative}
+#detail-nav-title{position:absolute;left:50%;transform:translateX(-50%);white-space:nowrap;pointer-events:none}
+#page-detail>.top-bar .detail-clock{margin-left:auto}
+/* v1.0.7 options and detail clock */
+.home-options-trigger{border:0;background:rgba(255,255,255,.14);color:white;border-radius:6px;padding:6px 15px;font-size:14px;font-weight:600;cursor:pointer}
+.detail-clock{font-size:12px;text-align:right;white-space:nowrap;line-height:1.35;font-variant-numeric:tabular-nums;min-width:116px;pointer-events:none}
+#detail-elapsed{font-size:10px;color:#fff;white-space:nowrap}
+#detail-elapsed.elapsed-success{color:#79ed91;font-weight:700}
+#detail-elapsed.elapsed-fail{color:#ff8585;font-weight:700}
+.option-row{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.option-row label{flex:1;font-size:14px;font-weight:600;color:#14452F}
+.settings-box .option-row select{width:76px;flex-shrink:0}
+.option-help{font-size:11px;color:#888;line-height:1.5;margin-top:-6px}
+/* v1.0.9 */
+.records-filter{width:105px;max-width:100%;padding:5px 7px;border:1px solid #d5ddd7;border-radius:6px;background:white;color:#14452F;font-size:12px;margin-bottom:7px}
+.records-mode.blank{visibility:hidden}
+#captcha-modal.authentic-exit .modal-box{opacity:0;transition:opacity .35s ease}
+#captcha-modal.authentic-exit{background:transparent;transition:background .35s ease}
+.virtual-keyboard.authentic-exit{transform:translateY(110%);transition:transform .35s ease-in,visibility 0s linear .35s}
+#authentic-loading{display:none;position:absolute;inset:0;z-index:350;background:rgba(0,0,0,.5);align-items:flex-end;justify-content:center}
+#authentic-loading .authentic-sheet{width:100%;background:white;border-radius:14px 14px 0 0;padding:40px 22px calc(38px + env(safe-area-inset-bottom,0px));min-height:245px;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;transform:translateY(0)}
+#authentic-loading.leaving .authentic-sheet{transform:translateY(110%);transition:transform .25s ease-in}
+#result-modal.authentic-fade{animation:authentic-result-in .15s ease-out both}
+@keyframes authentic-result-in{from{opacity:0}to{opacity:1}}
+/* v1.1.1 — short home difficulty hint without layout shift */
+.header-info{position:relative}
+/* Anchor hint to the clock itself; countdown width changes move it automatically. */
+#clock-trigger{position:relative;flex-shrink:0}
+#difficulty-hint{position:absolute;right:calc(100% + 8px);top:50%;transform:translateY(-50%);color:#fff;font-size:10px;line-height:1;white-space:nowrap;pointer-events:none;opacity:0;z-index:1}
+#difficulty-hint.play{animation:difficulty-hint-fade 1.5s ease-out both}
+@keyframes difficulty-hint-fade{0%,66.666%{opacity:1}100%{opacity:0}}
+</style>
+
+<style>
+#ws-app{display:none;position:absolute;inset:0;background:#f7faf7;z-index:650;overflow:auto;color:#183d2c;font-family:system-ui,-apple-system,sans-serif}
+#ws-app *{box-sizing:border-box}#ws-app .ws-top{background:#154d32;color:white;padding:15px 14px;display:flex;justify-content:space-between;align-items:center;gap:8px;position:sticky;top:0;z-index:2}
+#ws-app .ws-main{padding:16px;max-width:540px;margin:auto}#ws-app .ws-card{background:white;border:1px solid #dce8de;border-radius:13px;padding:16px;margin:12px 0;box-shadow:0 2px 7px #1232}
+#ws-app button{border:0;border-radius:9px;padding:12px 15px;font-weight:700;cursor:pointer}#ws-app button:disabled{opacity:.45;cursor:not-allowed}
+#ws-app .ws-green{background:#18834a;color:white}#ws-app .ws-white{background:white;color:#18834a;border:1px solid #18834a}#ws-app .ws-gray{background:#e6e9e7;color:#45534a}
+#ws-app .ws-stack{display:grid;gap:10px}#ws-app input,#ws-app select{width:100%;padding:12px;border:1px solid #c5d6ca;border-radius:8px;font-size:16px;background:white;color:#123}
+#ws-app .ws-muted{color:#718075;font-size:12px}#ws-app .ws-link{color:#88918b;font-size:12px;text-align:center;text-decoration:underline;cursor:pointer;padding:8px}
+#ws-app .ws-columns{display:grid;grid-template-columns:1fr 1fr;gap:10px}#ws-app .ws-big{font-size:26px;font-weight:800;font-variant-numeric:tabular-nums}
+#ws-app .ws-digits{letter-spacing:5px;font-size:24px;text-align:center;font-weight:800;font-variant-numeric:tabular-nums}
+#ws-app .ws-keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}#ws-app .ws-keypad button{font-size:22px;background:#e9f0ec}
+#ws-app .ws-scroll{max-height:65vh;overflow:auto}#ws-app .ws-tag{display:inline-block;padding:4px 9px;border-radius:15px;background:#e6f3ea;font-size:12px}
+
+/* Beta2: restore centered settings and move compact mode menu to the original subtitle */
+#page-home .ws-home-top{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;gap:8px}
+#page-home .ws-home-top .home-options-trigger{grid-column:2;justify-self:center}
+#page-home .ws-home-top .my-points{grid-column:3;justify-self:end;white-space:nowrap}
+#page-home .ws-home-top>div:first-child{grid-column:1;min-width:0}
+#page-home .header-info{overflow:visible}
+.ws-mode-title{position:relative;display:flex;align-items:center;gap:5px;min-width:0;font-size:14px;font-weight:700}
+#ws-current-mode{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#ws-mode-toggle{border:0;border-radius:0;background:transparent;color:#fff;min-width:18px;width:18px;height:26px;padding:0;box-shadow:none;appearance:none;-webkit-appearance:none;font-size:17px;line-height:1;cursor:pointer;flex-shrink:0}
+.ws-mode-menu{position:absolute;left:0;top:calc(100% + 8px);width:max-content;max-width:min(290px,85vw);background:white;border:1px solid #d6e4d9;border-radius:9px;box-shadow:0 6px 18px #0003;z-index:80;padding:5px}
+.ws-mode-menu[hidden]{display:none}
+.ws-mode-menu button{display:block;width:100%;border:0;background:white;color:#14452f;text-align:left;font-size:13px;padding:11px;border-radius:6px;white-space:nowrap}
+.ws-mode-menu button:active{background:#edf5ef}
+/* Beta3: centered, frameless competition entry and join pages */
+#ws-app{display:none;flex-direction:column;overflow:hidden}
+#ws-app .ws-top{flex:0 0 auto}
+#ws-app .ws-main{flex:1;min-height:0;overflow-y:auto;width:100%;max-width:540px;margin:0 auto;padding:18px 16px 28px;-webkit-overflow-scrolling:touch}
+#ws-app .ws-main.ws-center{display:flex;flex-direction:column;justify-content:center}
+#ws-app .ws-plain{width:100%;display:grid;gap:14px;padding:8px 0;background:transparent;border:0;box-shadow:none}
+#ws-app .ws-plain h2{text-align:center;margin:0 0 12px;font-size:26px;line-height:1.3}
+#ws-app .ws-plain>button{min-height:52px;font-size:16px}
+#ws-app .ws-plain .ws-link{margin-top:3px;line-height:1.6}
+#ws-app .ws-rules{max-width:100%;background:white;border:1px solid #dce8de;border-radius:14px;padding:22px 18px;box-shadow:0 2px 7px #1232}
+#ws-app .ws-rules h2{font-size:23px;line-height:1.4;margin:0 0 12px}
+#ws-app .ws-rule-section{padding:16px 0;border-top:1px solid #e4ece6}
+#ws-app .ws-rule-section h3{font-size:19px;line-height:1.4;margin:0 0 12px}
+#ws-app .ws-rule-section p{font-size:15px;line-height:1.85;margin:0 0 12px;letter-spacing:.2px}
+#ws-app .ws-rule-section p:last-child{margin-bottom:0}
+#ws-app .ws-rule-close{width:100%;margin:16px 0 4px}
+@media(max-width:370px){#page-home .ws-home-top{gap:3px}#page-home .ws-home-top>div:first-child span{font-size:9px!important}#page-home .ws-home-top .home-options-trigger{padding:6px 9px} .ws-mode-title{font-size:12px}}
+</style>
+</head>
+<body>
+<div class="phone-container">
+<div id="page-home" style="display:flex;flex-direction:column;height:100%">
+<div class="top-bar ws-home-top"><div style="display:flex;align-items:center;gap:7px"><div class="back-btn">←</div><span style="font-size:11px;opacity:.85">v1.2.0 Beta3</span></div><button class="home-options-trigger" onclick="openOptions()">設定</button><div class="my-points" role="button" tabindex="0" onclick="openRecords()">我的紀錄</div></div>
+<div class="header-info"><div class="ws-mode-title"><span id="ws-current-mode">Wing Stars 賽前簽名會</span><button id="ws-mode-toggle" type="button" aria-label="切換遊戲模式" aria-expanded="false" onclick="wsToggleModeMenu()">⌄</button><div id="ws-mode-menu" class="ws-mode-menu" hidden><button onclick="wsChooseMode('solo')">Wing Stars 賽前簽名會</button><button onclick="wsChooseMode('multi')">競賽模式</button></div></div><div class="clock-box" id="clock-trigger" title="點擊設定時間"><span id="difficulty-hint" aria-hidden="true">點擊調整難度→</span><div id="live-time">12:59:52.83</div><div id="countdown-display" class="countdown-line" style="display:none"></div></div></div>
+<div class="content">
+<div class="banner-card">
+<img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='800' height='450' viewBox='0 0 800 450'><rect width='800' height='450' fill='%2314452F'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' font-size='24' fill='%23ffffff'>Wing Stars 橫向大合照 (不可按)</text></svg>" class="banner-img" alt="banner">
+<div class="banner-text"><div class="banner-title">Wing Stars 賽前簽名會</div><p>參加方式：APP點數兌換60點 (單一帳號僅限兌換一次)<br>•9/8 (二) 12：00起開放兌換鷹國皇家會員，共10個名額，換完為止...</p></div><div class="see-more">查看更詳細 ∨</div>
+</div>
+<div class="filter-bar"><div id="challenge-stats" class="challenge-stats" style="display:none"><span>挑戰成功次數：<span id="challenge-success">0</span>/<span id="challenge-total">0</span><span id="challenge-rate">（0%）</span></span><button type="button" id="challenge-reset" aria-label="重整目前模式挑戰統計" title="重整目前模式挑戰統計" onclick="resetChallengeStats()">↻</button></div><span>日期舊到新 ↕</span></div>
+<div class="item-card" onclick="goToDetail(0)"><div class="item-tag">鷹國皇家</div><div class="item-header"><img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'><rect width='200' height='200' fill='%23a5d6a7'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' font-size='16' fill='%2314452F'>簽名會主視覺</text></svg>" class="item-thumb" alt="thumb"><div class="item-info"><p style="font-weight:bold;color:#2e7d32"><span class="ws-yesterday"></span></p><h4>Wing Stars 賽前簽名會 (鷹國皇家會員專屬)</h4></div></div></div>
+<div class="item-card" onclick="goToDetail(1)"><div class="item-header"><img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'><rect width='200' height='200' fill='%23a5d6a7'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' font-size='16' fill='%2314452F'>簽名會主視覺</text></svg>" class="item-thumb" alt="thumb"><div class="item-info"><p style="font-weight:bold;color:#2e7d32"><span class="ws-yesterday"></span></p><h4>Wing Stars 賽前簽名會</h4></div></div></div>
+</div></div>
+
+<div id="page-records">
+<div class="top-bar"><div class="back-btn" onclick="closeRecords()">←</div><div class="title">我的紀錄</div><div style="width:20px"></div></div>
+<div class="records-body">
+<div class="records-summary"><div><div class="metric-label">成功兌換次數</div><div class="metric-value" id="records-total">0 次</div></div><div style="text-align:right"><select id="records-filter" class="records-filter" aria-label="紀錄難度篩選" onchange="renderRecords()"><option value="all">全部</option><option value="3">3秒</option><option value="3.5">3.5秒</option><option value="4">4秒</option><option value="4.5">4.5秒</option><option value="5">5秒</option><option value="5.5">5.5秒</option><option value="6">6秒</option><option value="6.5">6.5秒</option><option value="7">7秒</option><option value="7.5">7.5秒</option><option value="8">8秒</option></select><div class="metric-label">最佳紀錄</div><div class="metric-value" id="records-best">—</div></div></div>
+<div class="records-heading">兌換速度排行榜</div><div class="records-note">若網站刷新或重開，所有紀錄將自動刪除</div>
+<div class="records-table"><div class="records-row records-head"><span>排名</span><span style="text-align:center">模式</span><span style="text-align:right">消耗秒數</span></div><div id="records-list"><div class="records-empty">目前尚無兌換成功紀錄</div></div></div>
+<div class="records-footer" id="records-footer">目前顯示 0 筆紀錄</div>
+</div></div>
+
+<div id="page-detail" class="detail-page">
+<div class="top-bar"><div class="back-btn" onclick="goBackHome()">←</div><div class="title" id="detail-nav-title">活動詳情</div><div class="detail-clock" aria-label="目前時間"><div id="detail-live-time">00:00:00.00</div><div id="detail-elapsed" style="display:none"></div></div></div>
+<div class="loading-status" id="loading-status">正在刷新...</div>
+<div class="detail-content">
+<img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='800' height='450' viewBox='0 0 800 450'><rect width='800' height='450' fill='%23c8e6c9'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' font-size='20' fill='%2314452F'>2026 Wing Stars 賽前簽名會</text></svg>" class="detail-img" alt="活動圖片">
+<h3 id="detail-main-title" style="margin-bottom:12px;font-size:16px;color:#14452F">Wing Stars 賽前簽名會</h3>
+<div class="points-box"><span>兌換點數</span><span>60 點</span></div>
+<div class="info-row"><div class="info-label">兌換期間</div><div class="info-value"><span class="ws-yesterday"></span> 13:00 ~ <span class="ws-yesterday"></span> 23:00</div></div>
+<div class="info-row"><div class="info-label">兌換資格</div><div class="info-value" id="detail-qualification">所有會員皆適用</div></div>
+<div class="info-row"><div class="info-label">兌換上限</div><div class="info-value">1次</div></div>
+<div class="info-row"><div class="info-label">全站數量</div><div class="info-value">50</div></div>
+<div class="info-row"><div class="info-label">使用期間</div><div class="info-value">2026/09/13 12:00 ~ 2026/09/13 19:00</div></div>
+<div class="info-row"><div class="info-label">使用地點</div><div class="info-value">澄清湖棒球場 (高雄市鳥松區大埤路 113 號)</div></div><div class="bottom-action-bar"><button id="main-action-btn" class="action-btn green" onclick="openCaptchaModal()">立即兌換</button></div>
+</div>
+</div>
+
+<div class="modal-overlay" id="captcha-modal"><div class="modal-box">
+<div class="captcha-box" id="captcha-display">------</div><div class="modal-title">輸入驗證碼完成兌換</div><div class="modal-desc">請輸入驗證碼確認身份，兌換後不可取消。</div>
+<div class="captcha-input-container" id="captcha-input-trigger"><input type="text" id="captcha-input" class="captcha-input" placeholder="輸入6位數驗證碼" readonly></div>
+<div class="refresh-row"><span class="error-msg" id="error-msg-text">驗證碼錯誤</span><div class="refresh-right"><div class="refresh-btn" onclick="refreshCaptchaCode()"><span>🔄 驗證碼更新</span></div><span id="captcha-countdown">02:00</span></div></div>
+<div class="modal-buttons"><button class="modal-btn cancel" onclick="closeCaptchaModal()">取消</button><button class="modal-btn submit disabled" id="modal-submit-btn" onclick="submitRedemption()">立即兌換</button></div>
+</div></div>
+
+<div class="virtual-keyboard" id="virtual-keyboard"><div class="vk-top"><span>自動填寫</span><span id="vk-done-btn">完成</span></div><div class="vk-grid">
+<div class="vk-key" data-key="1">1</div><div class="vk-key" data-key="2">2</div><div class="vk-key" data-key="3">3</div><div class="vk-key" data-key="4">4</div><div class="vk-key" data-key="5">5</div><div class="vk-key" data-key="6">6</div><div class="vk-key" data-key="7">7</div><div class="vk-key" data-key="8">8</div><div class="vk-key" data-key="9">9</div><div class="vk-spacer" aria-hidden="true"></div><div class="vk-key" data-key="0">0</div><div class="vk-key" data-key="backspace">←</div>
+</div></div>
+
+<div class="settings-modal" id="options-modal"><div class="settings-box">
+<h3>設定</h3>
+<div class="option-row"><label for="option-keyboard">數字鍵盤自動彈出</label><select id="option-keyboard"><option value="false" selected>關</option><option value="true">開</option></select></div>
+<div class="option-help">開啟此功能，數字鍵盤將自動跳出，無需手動點擊</div>
+<div class="option-row"><label for="option-elapsed">顯示消耗時間</label><select id="option-elapsed"><option value="false">關</option><option value="true" selected>開</option></select></div>
+<div class="option-help">開啟後，在活動詳情頁時鐘下方顯示消耗秒數與挑戰模式</div>
+<div class="option-row"><label for="option-challenge-stats">顯示挑戰成功次數</label><select id="option-challenge-stats"><option value="false" selected>關</option><option value="true">開</option></select></div>
+<div class="option-help">3秒、3.5秒強制顯示；其他秒數可自行開啟或關閉，各難度獨立統計。</div>
+<div class="option-row"><label for="option-raise-action">立即兌換按鍵上移</label><select id="option-raise-action"><option value="false" selected>關</option><option value="true">開</option></select></div>
+<div class="option-help">僅將活動詳情頁底部的立即兌換按鍵上移，不改動其他文字與間距</div>
+<div class="option-row"><label for="option-authentic">更貼近正版</label><select id="option-authentic"><option value="false" selected>關</option><option value="true">開</option></select></div>
+<div class="option-help">開啟後，兌換時模擬正版網站的載入畫面與轉場動畫</div>
+<div class="option-row"><label for="option-error">錯誤</label><select id="option-error"><option value="false" selected>關</option><option value="true">開</option></select></div>
+<div class="option-help">開啟後有機會跳出錯誤，機率可自行設定為1%～10%。</div>
+<div class="option-row"><label for="option-error-chance">錯誤發生機率</label><select id="option-error-chance"><option value="1" selected>1%</option><option value="2">2%</option><option value="3">3%</option><option value="4">4%</option><option value="5">5%</option><option value="6">6%</option><option value="7">7%</option><option value="8">8%</option><option value="9">9%</option><option value="10">10%</option></select></div>
+<div class="option-row"><label for="option-tolerance">誤差模式</label><select id="option-tolerance"><option value="0.00" selected>+0.00秒</option><option value="0.01">+0.01秒</option><option value="0.02">+0.02秒</option><option value="0.03">+0.03秒</option><option value="0.04">+0.04秒</option><option value="0.05">+0.05秒</option><option value="0.06">+0.06秒</option><option value="0.07">+0.07秒</option><option value="0.08">+0.08秒</option><option value="0.09">+0.09秒</option><option value="0.10">+0.10秒</option><option value="0.11">+0.11秒</option><option value="0.12">+0.12秒</option><option value="0.13">+0.13秒</option><option value="0.14">+0.14秒</option><option value="0.15">+0.15秒</option><option value="0.16">+0.16秒</option><option value="0.17">+0.17秒</option><option value="0.18">+0.18秒</option><option value="0.19">+0.19秒</option><option value="0.20">+0.20秒</option></select></div>
+<div class="option-help">可自行調整兌換時間的容許誤差，設為0.00秒即為關閉，開啟後將自動關閉「更貼近正版」及「錯誤」模式。</div>
+<button class="action-btn green" onclick="saveOptions()">儲存設定</button>
+<button class="action-btn gray" onclick="closeOptions()">取消</button>
+</div></div>
+<div class="settings-modal" id="settings-modal"><div class="settings-box">
+<h3>搶票與計時設定</h3>
+<div><label>搶票時間設定 (可關閉)</label><select id="set-target-enabled"><option value="false">關閉搶票時間</option><option value="true">開啟搶票時間</option></select></div>
+<div id="target-time-inputs" style="display:none;margin-top:6px"><label>設定目標時間 (例: 2026/11/03 12:00:00)</label><input type="datetime-local" id="set-target-datetime" style="margin-top:4px"></div>
+<div><label>消耗時間限制 (預設5.5秒)</label><select id="set-consumption-limit"><option value="3">3秒——地獄難度</option><option value="3.5">3.5秒——限定1人兌換</option><option value="4">4秒——限定10人兌換</option><option value="4.5">4.5秒——限定30人兌換</option><option value="5">5秒——限定50人兌換</option><option value="5.5" selected>5.5秒——預設難度</option><option value="6">6秒——限定100人兌換</option><option value="6.5">6.5秒——小朋友難度</option><option value="7">7秒——簡單難度</option><option value="7.5">7.5秒——無聊難度</option><option value="8">8秒——白痴難度</option></select></div>
+<button class="action-btn green" style="margin-top:8px" onclick="saveSettings()">儲存設定</button>
+</div></div>
+
+<div id="authentic-loading" aria-live="polite"><div class="authentic-sheet"><div style="font-size:26px;font-weight:700;color:#111">Loading 忙碌中</div><div style="font-size:14px;line-height:1.7;color:#888">您的兌換申請正在確認中。為確保作業成功，請暫留在此畫面，稍候即可完成。</div></div></div>
+<div class="modal-overlay" id="network-error-modal" style="z-index:410"><div class="modal-box">
+<div style="font-size:38px;color:red;margin-bottom:10px">✕</div><div class="modal-title" id="network-error-title" style="font-size:20px;color:#222;margin-bottom:22px">HTTP 429</div>
+<div class="modal-buttons"><button class="modal-btn cancel" style="width:100%;flex:1" onclick="confirmNetworkError()">確定</button></div>
+</div></div>
+<div class="modal-overlay" id="result-modal" style="z-index:400"><div class="modal-box">
+<div id="result-icon" style="font-size:36px;margin-bottom:8px">✓</div><div class="modal-title" id="result-title" style="font-size:18px;margin-bottom:12px">兌換成功！</div>
+<div id="result-body" style="font-size:14px;text-align:center;line-height:1.6;margin-bottom:20px">消耗時間：2.35秒<br>準確度：100%</div>
+<div class="modal-buttons"><button class="modal-btn cancel" id="result-left-btn" onclick="resultConfirmAction()">確認</button><button class="modal-btn submit" id="result-right-btn" onclick="resultHomeAction()">回到主頁</button></div>
+</div></div>
+</div>
+
+
+<div id="ws-app"><div class="ws-top"><button class="ws-gray" onclick="wsExit()">←</button><b>Wing Stars 競賽模式 <small>Beta3</small></b><span id="ws-online">連線中</span></div><div id="ws-content" class="ws-main"></div></div>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
+<script>
+let appState = {
+targetTimeEnabled:false,targetTimestamp:null,consumptionLimit:5.5,startTime:null,captchaLoadToken:0,pausedSubmitMs:0,
+currentCaptcha:"",inputCaptcha:"",captchaSecondsLeft:120,captchaTimer:null,
+selectedCardType:0,lastResultStatus:null,detailEntryAllowed:true,detailLoadToken:0,submitting:false,autoKeyboard:false,showElapsed:true,raiseAction:false,showChallengeStats:false,challengeStats:Object.fromEntries([3,3.5,4,4.5,5,5.5,6,6.5,7,7.5,8].map(n=>[String(n),{success:0,total:0}])),authenticMode:false,authenticPreference:false,errorMode:false,errorChance:1,tolerance:0,errorOccurred:false,pendingErrorRetryCaptcha:false,usedCaptchas:new Set(),frozenDuration:null,elapsedResultConfirmed:false,successfulRecords:[],recordsReturnPage:"page-home"
+};
+
+setInterval(()=>{
+const now=new Date();
+const timeStr=now.toTimeString().split(" ")[0]+"."+String(now.getMilliseconds()).padStart(3,"0").slice(0,2);
+document.getElementById("live-time").innerText=timeStr;
+document.getElementById("detail-live-time").innerText=timeStr;
+updateElapsedDisplay();
+if(appState.targetTimeEnabled&&appState.targetTimestamp){
+const diff=appState.targetTimestamp-now.getTime();
+const cdDisplay=document.getElementById("countdown-display");
+cdDisplay.style.display="block";
+if(diff>0){
+const m=Math.floor(diff/60000),s=Math.floor((diff%60000)/1000),ms=Math.floor((diff%1000)/10);
+cdDisplay.innerText=`距離搶票倒數：${m}分${s}.${ms}秒`;
+}else{cdDisplay.innerText=`搶票時間已到！`;}
+}else{document.getElementById("countdown-display").style.display="none";}
+},50);
+
+document.getElementById("clock-trigger").addEventListener("click",()=>{
+document.getElementById("settings-modal").style.display="flex";
+});
+document.getElementById("set-target-enabled").addEventListener("change",e=>{
+document.getElementById("target-time-inputs").style.display=e.target.value==="true"?"block":"none";
+});
+function updateChallengeStats(){
+ const mode=String(appState.consumptionLimit);
+ const data=appState.challengeStats[mode];
+ const box=document.getElementById("challenge-stats");
+ box.style.display=data&&(Number(mode)<=3.5||appState.showChallengeStats)?"flex":"none";
+ if(data){document.getElementById("challenge-success").textContent=data.success;document.getElementById("challenge-total").textContent=data.total;document.getElementById("challenge-rate").textContent="（"+(data.total?Number((data.success/data.total*100).toFixed(2)):0)+"%）";}
+}
+function resetChallengeStats(){
+ const data=appState.challengeStats[String(appState.consumptionLimit)];
+ if(data){data.success=0;data.total=0;updateChallengeStats();}
+}
+function recordChallengeResult(success){
+ const data=appState.challengeStats[String(appState.consumptionLimit)];
+ if(!data)return;
+ data.total++;if(success)data.success++;
+ updateChallengeStats();
+}
+updateChallengeStats();
+function playDifficultyHint(){
+ const el=document.getElementById("difficulty-hint");
+ el.classList.remove("play");
+ if(appState.targetTimeEnabled){el.style.opacity="0";return;}
+ el.style.opacity="";
+ void el.offsetWidth;
+ el.classList.add("play");
+}
+playDifficultyHint();
+function saveSettings(){
+const enabled=document.getElementById("set-target-enabled").value==="true";
+appState.targetTimeEnabled=enabled;
+const hint=document.getElementById("difficulty-hint");
+if(enabled){hint.classList.remove("play");hint.style.opacity="0";}
+appState.targetTimestamp=null;
+if(enabled){
+const dtVal=document.getElementById("set-target-datetime").value;
+if(dtVal){appState.targetTimestamp=new Date(dtVal).getTime();}
+else{appState.targetTimestamp=new Date().getTime()+10000;}
+}
+ appState.consumptionLimit=parseFloat(document.getElementById("set-consumption-limit").value);
+ updateChallengeStats();
+ syncChallengeStatsOption();
+document.getElementById("settings-modal").style.display="none";
+}
+let optionsAuthenticBeforeError=false;
+function syncOptions(changed){
+ const authentic=document.getElementById("option-authentic"),error=document.getElementById("option-error"),tol=document.getElementById("option-tolerance");
+ if(changed==="error"&&error.value==="true"){
+   if(Number(tol.value)>0){error.value="false";return;}
+   optionsAuthenticBeforeError=authentic.value==="true";
+   authentic.value="true";
+ }
+ if(changed==="error"&&error.value==="false")authentic.value=String(optionsAuthenticBeforeError);
+ if(changed==="authentic"){
+   if(authentic.value==="true")tol.value="0.00";
+   else if(error.value==="true")authentic.value="true";
+ }
+ if(changed==="tolerance"&&Number(tol.value)>0){authentic.value="false";error.value="false";optionsAuthenticBeforeError=false;}
+ error.disabled=Number(tol.value)>0;
+ document.getElementById("option-error-chance").disabled=error.value!=="true";
+ authentic.disabled=error.value==="true";
+}
+document.getElementById("option-authentic").addEventListener("change",()=>syncOptions("authentic"));
+document.getElementById("option-error").addEventListener("change",()=>syncOptions("error"));
+document.getElementById("option-tolerance").addEventListener("change",()=>syncOptions("tolerance"));
+function openOptions(){
+ document.getElementById("option-keyboard").value=String(appState.autoKeyboard);
+ document.getElementById("option-elapsed").value=String(appState.showElapsed);
+ document.getElementById("option-challenge-stats").value=String(appState.showChallengeStats);
+ syncChallengeStatsOption();
+ document.getElementById("option-raise-action").value=String(appState.raiseAction);
+ document.getElementById("option-authentic").value=String(appState.authenticMode);
+ document.getElementById("option-error").value=String(appState.errorMode);
+ document.getElementById("option-error-chance").value=String(appState.errorChance);
+ document.getElementById("option-tolerance").value=appState.tolerance.toFixed(2);
+ optionsAuthenticBeforeError=appState.errorMode?appState.authenticPreference:appState.authenticMode;
+ syncOptions("open");document.getElementById("options-modal").style.display="flex";
+}
+function syncChallengeStatsOption(){
+ const forced=appState.consumptionLimit<=3.5;
+ const el=document.getElementById("option-challenge-stats");
+ el.disabled=forced;
+ if(forced)el.value="true";
+}
+function closeOptions(){document.getElementById("options-modal").style.display="none";}
+function saveOptions(){
+ appState.autoKeyboard=document.getElementById("option-keyboard").value==="true";
+ appState.showElapsed=document.getElementById("option-elapsed").value==="true";
+ if(appState.consumptionLimit>3.5)appState.showChallengeStats=document.getElementById("option-challenge-stats").value==="true";
+ updateChallengeStats();
+ appState.raiseAction=document.getElementById("option-raise-action").value==="true";
+ document.getElementById("page-detail").classList.toggle("raise-action",appState.raiseAction);
+ appState.authenticMode=document.getElementById("option-authentic").value==="true";
+ appState.errorMode=document.getElementById("option-error").value==="true";
+ appState.errorChance=Number(document.getElementById("option-error-chance").value);
+ appState.authenticPreference=appState.errorMode?optionsAuthenticBeforeError:appState.authenticMode;
+ appState.tolerance=Number(document.getElementById("option-tolerance").value);
+ closeOptions();updateElapsedDisplay();
+}
+function effectiveTimeLimit(){return appState.consumptionLimit+(appState.authenticMode?0:appState.tolerance);}
+function currentElapsedSeconds(){
+ if(appState.frozenDuration!==null)return appState.frozenDuration;
+ if(appState.targetTimeEnabled&&appState.targetTimestamp!==null)
+   return Math.max(0,(Date.now()-appState.targetTimestamp-appState.pausedSubmitMs)/1000);
+ if(appState.startTime===null)return 0;
+ return Math.max(0,(performance.now()-appState.startTime)/1000);
+}
+function updateElapsedDisplay(){
+ const el=document.getElementById("detail-elapsed");
+ if(!appState.showElapsed||document.getElementById("page-detail").style.display!=="flex"){el.style.display="none";return;}
+ el.style.display="block";
+ const seconds=currentElapsedSeconds();
+ el.textContent="消耗秒數 "+seconds.toFixed(2)+" 秒 ("+appState.consumptionLimit+")";
+ el.className=appState.elapsedResultConfirmed?(appState.lastResultStatus==="success"?"elapsed-success":"elapsed-fail"):"";
+}
+function goToDetail(cardType){
+isFirstOpenCaptcha=true;
+appState.lastResultStatus=null;
+appState.selectedCardType=cardType;
+appState.pausedSubmitMs=0;
+appState.frozenDuration=null;
+appState.elapsedResultConfirmed=false;
+appState.errorOccurred=false;
+appState.pendingErrorRetryCaptcha=false;
+// 搶票時間在第一次假裝載入結束時才判斷。
+const detailLoadToken=++appState.detailLoadToken;
+document.getElementById("page-home").style.display="none";
+document.getElementById("page-detail").style.display="flex";
+requestAnimationFrame(updateScrollModes);
+updateElapsedDisplay();
+if(cardType===0){
+document.getElementById("detail-main-title").innerText="Wing Stars 賽前簽名會 (鷹國皇家會員專屬)";
+document.getElementById("detail-nav-title").innerText="活動詳情";
+document.getElementById("detail-qualification").innerText="鷹國皇家會員專屬";
+}else{
+document.getElementById("detail-main-title").innerText="Wing Stars 賽前簽名會";
+document.getElementById("detail-nav-title").innerText="活動詳情";
+document.getElementById("detail-qualification").innerText="所有會員皆適用";
+}
+if(!appState.targetTimeEnabled){appState.startTime=performance.now();}
+const loadTime=600+Math.random()*400;
+const loadingEl=document.getElementById("loading-status");
+const actionBtn=document.getElementById("main-action-btn");
+loadingEl.style.display="block";loadingEl.innerText="正在刷新...";
+actionBtn.style.display="none";
+requestAnimationFrame(updateScrollModes);
+setTimeout(()=>{
+if(detailLoadToken!==appState.detailLoadToken)return;
+loadingEl.style.display="none";actionBtn.style.display="block";
+requestAnimationFrame(updateScrollModes);
+actionBtn.className="action-btn green";actionBtn.innerText="立即兌換";
+appState.detailEntryAllowed=!(appState.targetTimeEnabled&&appState.targetTimestamp!==null&&Date.now()<appState.targetTimestamp);
+if(!appState.detailEntryAllowed){actionBtn.className="action-btn gray";actionBtn.innerText="未到達時間不可兌換";actionBtn.onclick=null;actionBtn.disabled=true;}
+else{actionBtn.onclick=openCaptchaModal;actionBtn.disabled=false;}
+},loadTime);
+}
+function goBackHome(){
+isFirstOpenCaptcha=true;
+appState.detailLoadToken++;
+document.getElementById("page-detail").style.display="none";
+document.getElementById("page-home").style.display="flex";
+playDifficultyHint();
+requestAnimationFrame(updateScrollModes);
+appState.lastResultStatus=null;
+appState.frozenDuration=null;
+appState.elapsedResultConfirmed=false;
+appState.errorOccurred=false;
+appState.pendingErrorRetryCaptcha=false;
+}
+let isFirstOpenCaptcha=true;
+function openCaptchaModal(){
+if(!appState.detailEntryAllowed||appState.lastResultStatus!==null||document.getElementById("main-action-btn").disabled||appState.submitting)return;
+if(appState.targetTimeEnabled&&appState.targetTimestamp!==null){
+  if(Date.now()<appState.targetTimestamp)return;
+  appState.startTime=null; // 有設定時間時，以設定的絕對時間計算，不從點擊時重新計時。
+}
+document.getElementById("captcha-modal").style.display="flex";
+requestAnimationFrame(positionCaptcha);
+if(appState.autoKeyboard)showVirtualKeyboard();
+document.getElementById("captcha-input").value="";
+appState.inputCaptcha="";
+appState.currentCaptcha="";
+document.getElementById("error-msg-text").style.display="none";
+document.getElementById("modal-submit-btn").className="modal-btn submit disabled";
+const retryAfterNetworkError=appState.pendingErrorRetryCaptcha;
+appState.pendingErrorRetryCaptcha=false;
+const firstOpen=isFirstOpenCaptcha&&!retryAfterNetworkError;
+const loadTime=firstOpen?(600+Math.random()*400):0;
+const captchaLoadToken=++appState.captchaLoadToken;
+isFirstOpenCaptcha=false;
+const captchaDisplay=document.getElementById("captcha-display");
+if(appState.captchaTimer){clearInterval(appState.captchaTimer);appState.captchaTimer=null;}
+if(firstOpen){
+  captchaDisplay.innerHTML='<span class="captcha-loading-spinner" role="status" aria-label="驗證碼載入中"></span>';
+  document.getElementById("captcha-countdown").innerText="—:—";
+  setTimeout(()=>{
+    if(captchaLoadToken===appState.captchaLoadToken)generateNewCaptcha();
+  },loadTime);
+}else{
+  generateNewCaptcha();
+}
+}
+function closeCaptchaModal(){
+ if(appState.submitting)return;
+ appState.captchaLoadToken++;
+ if(appState.captchaTimer){clearInterval(appState.captchaTimer);appState.captchaTimer=null;}
+document.getElementById("captcha-modal").style.display="none";
+hideVirtualKeyboard();
+}
+function isValidCaptcha(s){
+ if(!/^[1-9][0-9]{5}$/.test(s))return false;
+ const counts={};
+ for(const d of s)counts[d]=(counts[d]||0)+1;
+ if(Object.keys(counts).length<4||Math.max(...Object.values(counts))>3)return false;
+ let pairs=0;
+ for(let i=1;i<s.length;i++)if(s[i]===s[i-1])pairs++;
+ if(pairs>1)return false;
+ for(let i=2;i<s.length;i++)if(s[i]===s[i-1]&&s[i-1]===s[i-2])return false;
+ if(Object.values(counts).includes(3)&&pairs>0)return false;
+ return true;
+}
+function makeValidCaptcha(){
+ let code;
+ do{code=String(Math.floor(100000+Math.random()*900000));}while(!isValidCaptcha(code)||appState.usedCaptchas.has(code));
+ appState.usedCaptchas.add(code);
+ if(!isValidCaptcha(code))throw new Error("Invalid generated captcha");
+ return code;
+}
+function generateNewCaptcha(){
+appState.currentCaptcha=makeValidCaptcha();
+document.getElementById("captcha-display").innerText=appState.currentCaptcha;
+const submitBtn=document.getElementById("modal-submit-btn");
+submitBtn.className="modal-btn submit";
+appState.captchaSecondsLeft=120;
+document.getElementById("captcha-countdown").innerText="02:00";
+if(appState.captchaTimer)clearInterval(appState.captchaTimer);
+appState.captchaTimer=setInterval(()=>{
+appState.captchaSecondsLeft--;
+const m=String(Math.floor(appState.captchaSecondsLeft/60)).padStart(2,"0");
+const s=String(appState.captchaSecondsLeft%60).padStart(2,"0");
+document.getElementById("captcha-countdown").innerText=`${m}:${s}`;
+if(appState.captchaSecondsLeft<=0){clearInterval(appState.captchaTimer);generateNewCaptcha();}
+},1000);
+}
+function refreshCaptchaCode(){generateNewCaptcha();}
+const inputTrigger=document.getElementById("captcha-input-trigger");
+const virtualKeyboard=document.getElementById("virtual-keyboard");
+const doneBtn=document.getElementById("vk-done-btn");
+inputTrigger.addEventListener("click",showVirtualKeyboard);
+
+doneBtn.addEventListener("click",hideVirtualKeyboard);
+
+function updateViewport(){
+ const h=window.visualViewport?window.visualViewport.height:window.innerHeight;
+ document.documentElement.style.setProperty("--app-height",Math.round(h)+"px");
+ requestAnimationFrame(()=>{updateScrollModes();positionCaptcha();});
+}
+function updateScrollModes(){
+ for(const [container,selector] of [
+  [document.querySelector("#page-home>.content"),"#page-home"],
+  [document.querySelector(".detail-content"),"#page-detail"]
+ ]){
+  if(!container||document.querySelector(selector).style.display==="none")continue;
+  container.classList.remove("can-scroll");
+  container.scrollTop=0;
+  if(container.scrollHeight>container.clientHeight+2)container.classList.add("can-scroll");
+ }
+}
+function positionCaptcha(){
+ const modal=document.getElementById("captcha-modal");
+ if(modal.style.display!=="flex")return;
+ const panel=modal.querySelector(".modal-box");
+ const kbHeight=virtualKeyboard.offsetHeight;
+ const gap=12;
+ // Reserve keyboard space from the first frame; never jump when it opens.
+ const available=Math.max(0,modal.clientHeight-kbHeight-gap);
+ const panelHeight=panel.offsetHeight;
+ const top=Math.max(8,Math.round(available-panelHeight-28));
+ modal.style.setProperty("--captcha-top",top+"px");
+}
+function showVirtualKeyboard(){
+ if(document.getElementById("captcha-modal").style.display!=="flex")return;
+ positionCaptcha();
+ virtualKeyboard.classList.add("open");
+}
+function hideVirtualKeyboard(){virtualKeyboard.classList.remove("open");}
+if(window.visualViewport){
+ window.visualViewport.addEventListener("resize",updateViewport);
+}
+window.addEventListener("resize",updateViewport);
+window.addEventListener("orientationchange",()=>setTimeout(updateViewport,100));
+document.addEventListener("DOMContentLoaded",updateViewport);
+updateViewport();
+const keys=document.querySelectorAll(".vk-key");
+keys.forEach(key=>{
+const handleKeyPress=e=>{e.preventDefault();e.stopPropagation();const keyValue=key.getAttribute("data-key");pressKey(keyValue);};
+key.addEventListener("click",handleKeyPress);
+});
+function pressKey(key){
+if(key==="backspace"){appState.inputCaptcha=appState.inputCaptcha.slice(0,-1);}
+else{if(appState.inputCaptcha.length<6){appState.inputCaptcha+=key;}}
+document.getElementById("captcha-input").value=appState.inputCaptcha;
+}
+function submitRedemption(){
+ if(appState.submitting||appState.lastResultStatus!==null||!appState.detailEntryAllowed)return;
+ const submitBtn=document.getElementById("modal-submit-btn");
+ if(submitBtn.classList.contains("disabled")||!appState.currentCaptcha)return;
+ const endTime=performance.now();
+ const durationSec=(appState.targetTimeEnabled&&appState.targetTimestamp!==null)
+   ?Math.max(0,(Date.now()-appState.targetTimestamp-appState.pausedSubmitMs)/1000)
+   :(endTime-appState.startTime)/1000;
+ const formattedDuration=durationSec.toFixed(2);
+ const isCorrectCode=appState.inputCaptcha===appState.currentCaptcha;
+ const tolerance=appState.authenticMode?0:appState.tolerance;
+ const isTimeout=durationSec>appState.consumptionLimit+tolerance;
+ const networkError=(appState.errorMode&&!appState.errorOccurred&&isCorrectCode)
+   ?(()=>{const roll=Math.random();const half=appState.errorChance/200;return roll<half?"HTTP 429":roll<2*half?"client error":null;})():null;
+ appState.submitting=true;
+ // Standard mode ends on timeout even if the captcha is wrong. Authentic mode
+ // keeps showing captcha errors until the correct code is submitted.
+ const finalSubmission=isCorrectCode||(!appState.authenticMode&&isTimeout);
+ if(finalSubmission&&!networkError){appState.frozenDuration=durationSec;updateElapsedDisplay();}
+ const authenticFinal=appState.authenticMode&&isCorrectCode;
+ if(authenticFinal){
+   const captcha=document.getElementById("captcha-modal");
+   captcha.classList.add("authentic-exit");virtualKeyboard.classList.add("authentic-exit");hideVirtualKeyboard();
+   setTimeout(()=>{captcha.style.display="none";captcha.classList.remove("authentic-exit");virtualKeyboard.classList.remove("authentic-exit");},350);
+   setTimeout(()=>{document.getElementById("authentic-loading").style.display="flex";},500);
+   if(networkError){
+     setTimeout(()=>{
+       document.getElementById("authentic-loading").style.display="none";
+       document.getElementById("network-error-title").textContent=networkError;
+       document.getElementById("network-error-modal").style.display="flex";
+       appState.errorOccurred=true;
+       appState.submitting=false;
+       appState.frozenDuration=null;
+       if(appState.captchaTimer){clearInterval(appState.captchaTimer);appState.captchaTimer=null;}
+       submitBtn.disabled=false;submitBtn.className="modal-btn submit";submitBtn.textContent="立即兌換";
+       updateElapsedDisplay();
+     },850);
+     return;
+   }
+   setTimeout(()=>{document.getElementById("authentic-loading").classList.add("leaving");},850);
+   setTimeout(()=>{document.getElementById("authentic-loading").style.display="none";document.getElementById("authentic-loading").classList.remove("leaving");},1100);
+ }else{hideVirtualKeyboard();}
+ submitBtn.className="modal-btn submit processing";
+ submitBtn.innerHTML='<span class="submit-spinner" role="status" aria-label="兌換處理中"></span>';
+ submitBtn.disabled=true;
+ setTimeout(()=>{
+   appState.submitting=false;submitBtn.disabled=false;
+   submitBtn.className="modal-btn submit";submitBtn.textContent="立即兌換";
+   closeCaptchaModal();
+   const resultModal=document.getElementById("result-modal");
+   const resultIcon=document.getElementById("result-icon");
+   const resultTitle=document.getElementById("result-title");
+   const resultBody=document.getElementById("result-body");
+   if(!authenticFinal)resultModal.style.display="flex";
+   if(isCorrectCode&&!isTimeout){
+     appState.lastResultStatus="success";
+     appState.successfulRecords.push({centiseconds:Math.round(durationSec*100),mode:appState.consumptionLimit});
+     recordChallengeResult(true);
+     resetTargetTimeAfterResult();
+     resultIcon.innerText="✓";resultIcon.style.color="#2e7d32";
+     resultTitle.innerText=(appState.consumptionLimit===3||appState.consumptionLimit===3.5)?"兌換成功！你也太扯了！":"兌換成功！";
+     const withinTolerance=durationSec>appState.consumptionLimit&&tolerance>0;
+     const timeText=withinTolerance
+       ?`<span style="color:#222;">消耗時間：${formattedDuration}秒（設定時間：${appState.consumptionLimit}+${tolerance.toFixed(2)}秒）</span>`
+       :`消耗時間：${formattedDuration}秒`;
+     resultBody.innerHTML=`兌換成功！<br>${timeText}<br>準確度：100%`;
+   }else if(!isCorrectCode&&(appState.authenticMode||!isTimeout)){
+     resultModal.style.display="none";
+     document.getElementById("captcha-modal").style.display="flex";
+     document.getElementById("error-msg-text").style.display="block";
+     requestAnimationFrame(positionCaptcha);
+     // Keep the original start timestamp unchanged during processing and wrong-code feedback.
+     appState.frozenDuration=null;
+     updateElapsedDisplay();
+     return;
+   }else{
+     appState.frozenDuration=durationSec;
+     appState.lastResultStatus="fail";recordChallengeResult(false);resetTargetTimeAfterResult();
+     resultIcon.innerText="✕";resultIcon.style.color="red";
+     resultTitle.innerText=appState.authenticMode?"很抱歉，品項已兌換完畢":"兌換失敗！";
+     let accuracy=100;
+     if(!isCorrectCode){let matchCount=0;for(let i=0;i<6;i++)if(appState.inputCaptcha[i]===appState.currentCaptcha[i])matchCount++;accuracy=Math.round(matchCount/6*100);}
+     resultBody.innerHTML=`兌換失敗！<br><span style="color:red;">消耗時間：${formattedDuration}秒（設定時間：${appState.consumptionLimit}秒）</span><br>準確度：${accuracy}%`;
+   }
+ },authenticFinal?1600:500);
+ if(authenticFinal){
+   setTimeout(()=>{document.getElementById("result-modal").classList.add("authentic-fade");document.getElementById("result-modal").style.display="flex";},1600);
+   setTimeout(()=>document.getElementById("result-modal").classList.remove("authentic-fade"),1750);
+ }
+}
+function confirmNetworkError(){
+ document.getElementById("network-error-modal").style.display="none";
+ document.getElementById("authentic-loading").style.display="none";
+ document.getElementById("authentic-loading").classList.remove("leaving");
+ document.getElementById("captcha-modal").style.display="none";
+ document.getElementById("main-action-btn").disabled=false;
+ document.getElementById("main-action-btn").className="action-btn green";
+ document.getElementById("main-action-btn").textContent="立即兌換";
+ document.getElementById("main-action-btn").onclick=openCaptchaModal;
+ isFirstOpenCaptcha=false;
+ appState.pendingErrorRetryCaptcha=true;
+ appState.currentCaptcha="";
+ document.getElementById("captcha-display").textContent="------";
+ appState.frozenDuration=null;
+ updateElapsedDisplay();
+}
+
+function resetTargetTimeAfterResult(){
+if(!appState.targetTimeEnabled)return;
+appState.targetTimeEnabled=false;
+appState.targetTimestamp=null;
+document.getElementById("set-target-enabled").value="false";
+document.getElementById("target-time-inputs").style.display="none";
+}
+function resultConfirmAction(){
+ document.getElementById("result-modal").style.display="none";
+ // Keep the existing detail page; no new loading animation and no re-entry.
+ const btn=document.getElementById("main-action-btn");
+ btn.style.display="block";
+ btn.className="action-btn gray";
+ btn.innerText=appState.lastResultStatus==="success"?"已達兌換上限":"已被兌換完畢";
+ btn.disabled=true;
+ btn.onclick=null;
+ appState.elapsedResultConfirmed=true;
+ updateElapsedDisplay();
+ document.getElementById("loading-status").style.display="none";
+ requestAnimationFrame(updateScrollModes);
+}
+function openRecords(){
+ const home=document.getElementById("page-home");
+ const detail=document.getElementById("page-detail");
+ appState.recordsReturnPage=detail.style.display==="flex"?"page-detail":"page-home";
+ home.style.display="none";
+ detail.style.display="none";
+ document.getElementById("page-records").style.display="flex";
+ document.getElementById("records-filter").value="all";
+ renderRecords();
+ document.querySelector(".records-body").scrollTop=0;
+}
+function closeRecords(){
+ document.getElementById("page-records").style.display="none";
+ document.getElementById(appState.recordsReturnPage).style.display="flex";
+ requestAnimationFrame(updateScrollModes);
+}
+function renderRecords(){
+ const filter=document.getElementById("records-filter").value;
+ const all=appState.successfulRecords.filter(record=>filter==="all"||String(record.mode)===filter);
+ const sorted=[...all].sort((a,b)=>a.centiseconds-b.centiseconds).slice(0,20);
+ document.getElementById("records-total").textContent=all.length+" 次";
+ document.getElementById("records-best").textContent=sorted.length?(sorted[0].centiseconds/100).toFixed(2)+" 秒":"—";
+ const list=document.getElementById("records-list");
+ list.replaceChildren();
+ if(!sorted.length){const empty=document.createElement("div");empty.className="records-empty";empty.textContent=filter==="all"?"目前尚無兌換成功紀錄":"此難度尚無兌換成功紀錄";list.appendChild(empty);}
+ sorted.forEach((record,i)=>{
+  const rank=sorted.findIndex(item=>item.centiseconds===record.centiseconds)+1;
+  const color=rank===1?"gold":rank===2?"silver":rank===3?"bronze":"";
+  const row=document.createElement("div");row.className="records-row";
+  const rankEl=document.createElement("div");rankEl.className="records-rank "+color;
+  if(rank<=3){const medal=document.createElement("span");medal.className="records-medal";medal.textContent=rank===1?"🥇":rank===2?"🥈":"🥉";rankEl.appendChild(medal);}
+  const label=document.createElement("span");label.textContent="第 "+rank+" 名";rankEl.appendChild(label);
+  const mode=document.createElement("span");mode.className="records-mode";mode.textContent=filter==="all"?"("+record.mode+")":"";if(filter!=="all")mode.classList.add("blank");
+  const time=document.createElement("span");time.className="records-time "+color;time.textContent=(record.centiseconds/100).toFixed(2)+" 秒";
+  row.append(rankEl,mode,time);list.appendChild(row);
+ });
+ document.getElementById("records-footer").textContent=all.length>20?"僅顯示最快的 20 筆紀錄":"目前顯示 "+sorted.length+" 筆紀錄";
+}
+function resultHomeAction(){
+document.getElementById("result-modal").style.display="none";
+goBackHome();
+}
+</script>
+
+<script>
+// Wing Stars v1.2.0 Beta3 — competition is isolated from the original solo engine.
+const wsConfig={apiKey:'AIzaSyBFYmxgGoM3Se7E5ZTqWwKpJ2cLSkrkt9g',authDomain:'wing-stars-ticket-simulator.firebaseapp.com',databaseURL:'https://wing-stars-ticket-simulator-default-rtdb.asia-southeast1.firebasedatabase.app',projectId:'wing-stars-ticket-simulator',appId:'1:810142393791:web:0737b6e67df86554e42d0a',messagingSenderId:'810142393791'};
+let wsDB=null,wsAuth=null,wsUID=null,wsRoomId='',wsRole='',wsRoom=null,wsListener=null,wsAttemptStart=0,wsCaptcha='',wsTyped='',wsPage='entry',wsAutoTimer=null,wsActiveAttempt=false,wsLastAttempt=0,wsFinishHandled=false,wsConnected=false,wsError='';
+const W=e=>document.getElementById(e),wsEsc=t=>String(t??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const wsServerNow=()=>Date.now()+(wsDB?.ref('.info/serverTimeOffset')?wsOffset:0);let wsOffset=0;
+const wsRoomRef=()=>wsDB.ref('rooms/'+wsRoomId);
+function wsDates(){const d=new Date();d.setDate(d.getDate()-1);const str=`${d.getFullYear()}/${String(d.getMonth()+1).padStart(2,'0')}/${String(d.getDate()).padStart(2,'0')}`;document.querySelectorAll('.ws-yesterday').forEach(e=>e.textContent=str)}
+wsDates();
+// Beta3: always start on the original solo homepage, regardless of Firebase state.
+W('ws-app').style.display='none';
+async function wsInit(){if(wsDB)return true;try{if(!window.firebase)throw Error('無法載入 Firebase SDK，請確認網路');if(!firebase.apps.length)firebase.initializeApp(wsConfig);wsAuth=firebase.auth();wsDB=firebase.database();await wsAuth.signInAnonymously();wsUID=wsAuth.currentUser.uid;wsDB.ref('.info/serverTimeOffset').on('value',s=>wsOffset=s.val()||0);wsDB.ref('.info/connected').on('value',s=>{wsConnected=!!s.val();W('ws-online').textContent=wsConnected?'● 已連線':'○ 離線';});return true}catch(e){wsError=e.message;W('ws-online').textContent='連線失敗';return false}}
+function wsToggleModeMenu(){const menu=W('ws-mode-menu'),open=menu.hidden;menu.hidden=!open;W('ws-mode-toggle').setAttribute('aria-expanded',String(open))}
+function wsChooseMode(v){W('ws-mode-menu').hidden=true;W('ws-mode-toggle').setAttribute('aria-expanded','false');W('ws-current-mode').textContent=v==='multi'?'競賽模式':'Wing Stars 賽前簽名會';wsMode(v)}
+function wsMode(v){if(v==='multi'){W('ws-app').style.display='flex';wsPage='entry';wsRender();wsInit().then(wsRender)}else wsExit()}
+function wsExit(){if(wsRoomId&&wsDB&&wsRole){/* leaving an active match counts as a disconnect; do not delete identity */}wsUnlisten();wsPage='entry';wsRoomId='';wsRoom=null;wsRole='';W('ws-app').style.display='none';W('ws-current-mode').textContent='Wing Stars 賽前簽名會';W('ws-mode-menu').hidden=true}
+function wsUnlisten(){if(wsListener&&wsDB&&wsRoomId)wsRoomRef().off('value',wsListener);wsListener=null;clearTimeout(wsAutoTimer)}
+function wsNotice(s){wsError=s;wsRender()}
+function wsSetPage(p){wsPage=p;wsRender()}
+function wsRules(){wsSetPage('rules')}
+function wsEntry(){wsSetPage('entry')}
+function wsBase(){return `<div class="ws-plain"><h2>Wing Stars 競賽模式</h2><button class="ws-green" onclick="wsSetPage('join')">輸入房號</button><button class="ws-white" onclick="wsCreate()">創建房間</button><div class="ws-link" role="button" tabindex="0" onclick="wsRules()">遊戲規則與計分說明 ›</div></div>`}
+function wsRulesHtml(){return `<div class="ws-rules"><h2>遊戲規則與計分說明</h2><section class="ws-rule-section"><h3>基本規則</h3><p>每間房間最多 3 人，分別為 Wing 隊、Stars 隊與 Jenny 觀戰者。</p><p>Wing 與 Stars 進行搶票競賽，Jenny 可以即時觀看雙方進度。</p><p>驗證碼錯誤或超過指定時間，該次兌換直接失敗。</p><p>斷線後有 30 秒可以重新連線。</p></section><section class="ws-rule-section"><h3>限時模式</h3><p>比賽時間為 30 秒或 60 秒，在時間內盡可能完成更多次成功兌換。</p><p>成功次數越多、準確率越高，成績通常越好；失敗會影響分數。</p><p>時間結束後，已進入驗證碼畫面的玩家最多還有 10 秒完成最後一題。</p></section><section class="ws-rule-section"><h3>次數模式</h3><p>目標為成功兌換 10～20 次，最長比賽時間為 10 分鐘。</p><p>完成指定次數所花的時間越短，分數越高。</p><p>雙方完成後立即結算；時間到雙方都未完成，則沒有勝利者。</p></section><section class="ws-rule-section"><h3>其他規則</h3><p>比賽開始後不能中途返回。</p><p>重新一局時，雙方必須返回等待室並準備完成，才能再次開始。</p><p>系統自動計算成績，詳細計分方式不公開。</p></section></div><button class="ws-gray ws-rule-close" onclick="wsEntry()">關閉說明</button>`}
+async function wsCreate(){if(!await wsInit())return wsNotice(wsError);try{const code=String(Math.floor(100000+Math.random()*900000));const room={owner:wsUID,createdAt:firebase.database.ServerValue.TIMESTAMP,status:'lobby',round:1,mode:'timed',duration:30,limit:5,goal:10,startedAt:0,players:{wing:{uid:wsUID,ready:false,online:true,success:0,fail:0,attempts:0,finishedAt:0,correct:'',typing:'',submitted:'',lastResult:'',phase:'waiting',lastSeen:Date.now()}},spectator:null};const ref=wsDB.ref('rooms/'+code);const tx=await ref.transaction(current=>current===null?room:undefined);if(!tx.committed)throw Error('房號衝突，請再試一次');wsJoinLocal(code,'wing')}catch(e){wsNotice('建立房間失敗：'+e.message)}}
+async function wsJoin(){const code=(W('ws-code')?.value||'').trim();if(!/^\d{6}$/.test(code))return wsNotice('請輸入六位數房號');if(!await wsInit())return wsNotice(wsError);try{const snap=await wsDB.ref('rooms/'+code).once('value'),r=snap.val();if(!r)throw Error('找不到房間');if(r.players?.wing?.uid===wsUID)return wsJoinLocal(code,'wing');if(r.players?.stars?.uid===wsUID)return wsJoinLocal(code,'stars');if(r.spectator?.uid===wsUID)return wsJoinLocal(code,'jenny');if(r.status!=='lobby')throw Error('比賽進行中，只允許原玩家返回');wsRoomId=code;wsRoom=r;wsSetPage('role')}catch(e){wsNotice('加入失敗：'+e.message)}}
+async function wsChoose(role){if(!wsRoomId)return;try{const path=role==='jenny'?'spectator':'players/stars';const ref=wsRoomRef().child(path);const tx=await ref.transaction(old=>old===null?role==='jenny'?{uid:wsUID,online:true,lastSeen:Date.now()}:{uid:wsUID,ready:false,online:true,success:0,fail:0,attempts:0,finishedAt:0,correct:'',typing:'',submitted:'',lastResult:'',phase:'waiting',lastSeen:Date.now()}:undefined);if(!tx.committed)throw Error('此角色已有人選擇');wsJoinLocal(wsRoomId,role)}catch(e){wsNotice('選擇角色失敗：'+e.message)}}
+function wsJoinLocal(code,role){wsUnlisten();wsRoomId=code;wsRole=role;sessionStorage.setItem('ws-rejoin',JSON.stringify({code,role,uid:wsUID}));wsPage='lobby';wsFinishHandled=false;wsListener=s=>{wsRoom=s.val();if(!wsRoom){wsNotice('房間已關閉');return}const p=wsRole==='jenny'?wsRoom.spectator:wsRoom.players?.[wsRole];if(p?.uid!==wsUID){wsNotice('角色身分不符');return}if(wsRoom.status==='playing'&&wsPage!=='game'&&wsPage!=='result'){wsPage='game';if(wsRole!=='jenny')wsStartAttempt();}if(wsRoom.status==='finished'&&wsPage!=='result'){wsPage='result';clearTimeout(wsAutoTimer)}if(wsRoom.status==='lobby'&&['result','game'].includes(wsPage)){wsPage='lobby';wsActiveAttempt=false;clearTimeout(wsAutoTimer)}wsRender()};wsRoomRef().on('value',wsListener,e=>wsNotice('房間讀取失敗：'+e.message));wsHeartbeat();}
+async function wsHeartbeat(){if(!wsRoomId||!wsRole||!wsDB)return;const path=wsRole==='jenny'?'spectator':'players/'+wsRole;const myCode=wsRoomId,myRole=wsRole;const ref=wsRoomRef().child(path);try{await ref.child('online').set(true);await ref.child('lastSeen').set(firebase.database.ServerValue.TIMESTAMP);await ref.child('online').onDisconnect().set(false)}catch(e){}setTimeout(()=>{if(wsRoomId===myCode&&wsRole===myRole)wsHeartbeat()},5000)}
+async function wsConfigUpdate(k,v){if(wsRole!=='wing'||wsRoom?.status!=='lobby')return;try{await wsRoomRef().child(k).set(v)}catch(e){wsNotice(e.message)}}
+async function wsReady(){if(!wsRoomId||wsRole==='jenny')return;try{await wsRoomRef().child('players/'+wsRole+'/ready').set(!wsRoom.players[wsRole].ready)}catch(e){wsNotice(e.message)}}
+async function wsStart(){if(wsRole!=='wing'||!wsRoom?.players?.stars?.uid||!wsRoom.players.wing.ready||!wsRoom.players.stars.ready)return;try{const tx=await wsRoomRef().transaction(r=>{if(!r||r.status!=='lobby'||!r.players?.wing?.ready||!r.players?.stars?.ready)return;return {...r,status:'playing',startedAt:Date.now()+wsOffset+1200}});if(!tx.committed)throw Error('無法開始')}catch(e){wsNotice(e.message)}}
+function wsRemaining(){if(!wsRoom)return 0;return Math.max(0,(wsRoom.startedAt+(wsRoom.mode==='timed'?wsRoom.duration*1000:600000)-wsServerNow())/1000)}
+function wsStartAttempt(){if(wsRole==='jenny'||!wsRoom||wsRoom.status!=='playing')return;const p=wsRoom.players?.[wsRole];if(p?.finishedAt)return;const deadline=wsRoom.startedAt+(wsRoom.mode==='timed'?wsRoom.duration*1000:600000);if(wsServerNow()>=deadline)return;wsActiveAttempt=true;wsAttemptStart=performance.now();wsTyped='';wsCaptcha='';wsPage='game';wsRoomRef().child('players/'+wsRole).update({phase:'loading',typing:'',correct:'',submitted:''}).catch(()=>{});wsRender();setTimeout(()=>{if(!wsActiveAttempt||wsPage!=='game'||wsRoom?.status!=='playing')return;wsRoomRef().child('players/'+wsRole+'/phase').set('detail').catch(()=>{});wsRender()},600+Math.random()*400)}
+function wsOpenCaptcha(){if(!wsActiveAttempt||wsRoom?.players?.[wsRole]?.phase!=='detail'||wsRemaining()<=0)return;wsCaptcha=wsMakeCode();wsTyped='';wsRoomRef().child('players/'+wsRole).update({phase:'captcha',correct:wsCaptcha,typing:'',submitted:''}).catch(()=>{});wsRender()}
+function wsMakeCode(){let c;do{c=String(Math.floor(100000+Math.random()*900000))}while(!/^[1-9]/.test(c)||new Set(c).size<4);return c}
+function wsKey(k){if(!wsActiveAttempt)return;wsTyped=k==='backspace'?wsTyped.slice(0,-1):(wsTyped.length<6?wsTyped+k:wsTyped);wsRoomRef().child('players/'+wsRole+'/typing').set(wsTyped).catch(()=>{});wsRender()}
+function wsRefresh(){if(!wsActiveAttempt)return;wsCaptcha=wsMakeCode();wsTyped='';wsRoomRef().child('players/'+wsRole).update({correct:wsCaptcha,typing:''}).catch(()=>{});wsRender()}
+function wsScore(p){const c=p?.success||0,f=p?.fail||0;return c+f?Math.max(0,100*(c-.5*f)*c/(c+f)):0}
+function wsScoreText(p){if(wsRoom?.mode==='timed')return Math.round(wsScore(p)).toLocaleString();return p?.finishedAt?Math.round(100000/Math.max(.01,(p.finishedAt-wsRoom.startedAt)/1000)).toLocaleString():'—'}
+async function wsSubmit(){if(!wsActiveAttempt||wsTyped.length!==6)return;if(wsRoom.mode==='timed'&&wsServerNow()>wsRoom.startedAt+wsRoom.duration*1000+10000)return wsNotice('最後一題提交期限已結束');const elapsed=(performance.now()-wsAttemptStart)/1000,ok=wsTyped===wsCaptcha&&elapsed<=Number(wsRoom.limit),p=wsRoom.players[wsRole];wsActiveAttempt=false;const now=wsServerNow();const success=(p.success||0)+(ok?1:0),fail=(p.fail||0)+(ok?0:1);const done=wsRoom.mode==='count'&&success>=wsRoom.goal;try{await wsRoomRef().child('players/'+wsRole).update({success,fail,attempts:(p.attempts||0)+1,submitted:wsTyped,typing:wsTyped,lastResult:ok?'成功':'失敗',lastDuration:Math.round(elapsed*100)/100,phase:done?'done':'popup',finishedAt:done?now:0});wsLastAttempt=Date.now();wsRender();if(!done){clearTimeout(wsAutoTimer);wsAutoTimer=setTimeout(wsNext,2000)}else wsCheckEnd()}catch(e){wsNotice(e.message)}}
+function wsNext(){clearTimeout(wsAutoTimer);if(wsRoom?.status!=='playing')return;const p=wsRoom.players?.[wsRole];if(p?.finishedAt)return;if(wsRoom.mode==='timed'&&wsRemaining()<=0)return;wsStartAttempt()}
+async function wsCheckEnd(){if(wsRole!=='wing'||!wsRoom||wsRoom.status!=='playing')return;const r=wsRoom,now=wsServerNow(),limit=r.startedAt+(r.mode==='timed'?r.duration*1000:600000),w=r.players?.wing,st=r.players?.stars;if(!w||!st)return;const expired=now>=limit,done=r.mode==='count'&&w.finishedAt&&st.finishedAt;
+const timedGrace=r.mode==='timed'&&now>=limit+10000;
+const wOff=w.online===false&&now-(w.lastSeen||now)>30000,stOff=st.online===false&&now-(st.lastSeen||now)>30000;
+if(done||timedGrace||(r.mode==='count'&&expired)||wOff||stOff){let winner='none';if(r.mode==='count'){if(w.finishedAt&&st.finishedAt)winner=w.finishedAt===st.finishedAt?'tie':w.finishedAt<st.finishedAt?'wing':'stars';else if(w.finishedAt)winner='wing';else if(st.finishedAt)winner='stars'}else{const a=wsScore(w),b=wsScore(st);winner=a>b?'wing':b>a?'stars':w.success>st.success?'wing':st.success>w.success?'stars':w.fail<st.fail?'wing':st.fail<w.fail?'stars':'tie'}if(wOff||stOff)winner=wOff&&stOff?'none':wOff?'stars':'wing';await wsRoomRef().update({status:'finished',winner}).catch(()=>{})}}
+async function wsRematch(){if(!wsRoom||!wsRole)return;try{if(wsRole==='wing'){const r=wsRoom;const reset=p=>({...p,ready:false,success:0,fail:0,attempts:0,finishedAt:0,correct:'',typing:'',submitted:'',lastResult:'',phase:'waiting'});await wsRoomRef().update({status:'lobby',winner:null,startedAt:0,round:(r.round||1)+1,'players/wing':reset(r.players.wing),'players/stars':reset(r.players.stars)});}wsPage='lobby';wsRender()}catch(e){wsNotice(e.message)}}
+async function wsNewRoom(){wsUnlisten();wsRoomId='';wsRole='';wsRoom=null;await wsCreate()}
+function wsPlayerPanel(role){const p=wsRoom?.players?.[role]||{},name=role==='wing'?'Wing 隊':'Stars 隊';return `<div class="ws-card" style="margin:0;min-width:0"><b>${name}</b><p class="ws-muted">狀態：${wsEsc(p.phase||'等待')}</p><div class="ws-muted">正確驗證碼</div><div class="ws-digits" style="font-size:17px;letter-spacing:1px">${wsEsc(p.correct||'------')}</div><div class="ws-muted">正在輸入</div><div class="ws-digits" style="font-size:17px;letter-spacing:1px">${wsEsc((p.typing||'').padEnd(6,'_'))}</div><div class="ws-muted">最後送出</div><div style="font-weight:700">${wsEsc(p.submitted||'—')}</div><div class="ws-muted">結果：${wsEsc(p.lastResult||'—')}</div><hr><div>成功 ${p.success||0} / 失敗 ${p.fail||0}</div><div>分數：${wsScoreText(p)}</div></div>`}
+function wsRender(){const c=W('ws-content');if(!c||W('ws-app').style.display==='none')return;const msg=wsError?`<div class="ws-card" style="color:#a32">${wsEsc(wsError)}</div>`:'';let html='';if(wsPage==='entry')html=wsBase();else if(wsPage==='rules')html=wsRulesHtml();else if(wsPage==='join')html=`<div class="ws-plain"><h2>輸入房號</h2><input id="ws-code" type="text" inputmode="numeric" maxlength="6" placeholder="6 位數房號"><button class="ws-green" onclick="wsJoin()">加入房間</button><button class="ws-gray" onclick="wsEntry()">返回</button></div>`;else if(wsPage==='role')html=`<div class="ws-card ws-stack"><h2>房間 ${wsEsc(wsRoomId)}</h2><p>請選擇角色</p><button class="ws-green" onclick="wsChoose('stars')" ${wsRoom?.players?.stars?'disabled':''}>Stars 隊（參賽）</button><button class="ws-white" onclick="wsChoose('jenny')" ${wsRoom?.spectator?'disabled':''}>Jenny 視角（觀戰）</button></div>`;else if(wsPage==='lobby'){const r=wsRoom||{},w=r.players?.wing,st=r.players?.stars;html=`<div class="ws-card ws-stack"><h2>房間 ${wsEsc(wsRoomId)} <span class="ws-tag">第 ${r.round||1} 局</span></h2><button class="ws-gray" onclick="navigator.clipboard?.writeText(wsRoomId)">複製房號</button><div>Wing：${w?.uid?'已加入':'未加入'} ${w?.ready?'✓ 已準備':''}</div><div>Stars：${st?.uid?'已加入':'等待玩家'} ${st?.ready?'✓ 已準備':''}</div><div>Jenny：${r.spectator?.uid?'已加入':'未加入（可選）'}</div>${wsRole==='wing'?`<label>比賽模式<select onchange="wsConfigUpdate('mode',this.value)"><option value="timed" ${r.mode==='timed'?'selected':''}>限時模式</option><option value="count" ${r.mode==='count'?'selected':''}>次數模式</option></select></label><label>全場時間（限時模式）<select onchange="wsConfigUpdate('duration',+this.value)"><option value="30" ${r.duration===30?'selected':''}>30 秒</option><option value="60" ${r.duration===60?'selected':''}>60 秒</option></select></label><label>成功目標（次數模式）<select onchange="wsConfigUpdate('goal',+this.value)">${Array.from({length:11},(_,i)=>`<option value="${i+10}" ${r.goal===i+10?'selected':''}>${i+10} 次</option>`).join('')}</select></label><label>單次時間限制<select onchange="wsConfigUpdate('limit',+this.value)">${[4,4.5,5,5.5,6].map(x=>`<option value="${x}" ${r.limit===x?'selected':''}>${x} 秒</option>`).join('')}</select></label>`:`<div>模式：${r.mode==='timed'?'限時':'次數'} / 單次 ${r.limit} 秒</div>`}${wsRole!=='jenny'?`<button class="ws-green" onclick="wsReady()">${r.players?.[wsRole]?.ready?'取消準備':'準備'}</button>`:'<p class="ws-muted">Jenny 已加入觀戰</p>'}${wsRole==='wing'?`<button class="ws-green" onclick="wsStart()" ${!st?.uid||!w?.ready||!st?.ready?'disabled':''}>開始比賽</button>`:''}${!st?.uid?'<p class="ws-muted">玩家未回到房間／等待 Stars 加入</p>':''}</div>`}
+else if(wsPage==='game'){const r=wsRoom||{},p=r.players?.[wsRole]||{},remaining=wsRemaining();if(wsRole==='jenny')html=`<div class="ws-card"><h2>Jenny 上帝視角</h2><div>模式：${r.mode==='timed'?'限時':'次數'}｜剩餘 <b id="ws-remaining">${remaining.toFixed(1)}</b> 秒</div></div><div class="ws-columns">${wsPlayerPanel('wing')}${wsPlayerPanel('stars')}</div>`;else {const phase=p.phase||'loading';html=`<div class="ws-card"><b>${wsRole==='wing'?'Wing 隊':'Stars 隊'}</b>｜${r.mode==='timed'?'限時':'次數'}模式 <div>全場剩餘 <b id="ws-remaining">${remaining.toFixed(1)}</b> 秒</div><div>成功 ${p.success||0} / 失敗 ${p.fail||0} ${r.mode==='count'?`/ 目標 ${r.goal}`:''}</div><div>單次限制 ${r.limit} 秒｜本次 <b id="ws-elapsed">${wsActiveAttempt?((performance.now()-wsAttemptStart)/1000).toFixed(2):'—'}</b> 秒</div></div>`;if(phase==='loading')html+=`<div class="ws-card"><h3>活動詳情</h3><p>正在刷新...</p></div>`;else if(phase==='detail')html+=`<div class="ws-card ws-stack"><h3>Wing Stars 賽前簽名會</h3><p>兌換點數：60 點</p><button class="ws-green" onclick="wsOpenCaptcha()" ${remaining<=0?'disabled':''}>${remaining<=0?'時間已到，不可兌換':'立即兌換'}</button></div>`;else if(phase==='captcha')html+=`<div class="ws-card ws-stack"><h3>輸入驗證碼完成兌換</h3><div class="ws-digits">${wsEsc(p.correct||wsCaptcha||'------')}</div><div class="ws-digits">${wsEsc((wsTyped||'').padEnd(6,'_'))}</div><button class="ws-gray" onclick="wsRefresh()">🔄 驗證碼更新</button><div class="ws-keypad">${['1','2','3','4','5','6','7','8','9','','0','backspace'].map(k=>k?`<button onclick="wsKey('${k}')">${k==='backspace'?'←':k}</button>`:'<span></span>').join('')}</div><button class="ws-green" onclick="wsSubmit()" ${wsTyped.length!==6?'disabled':''}>立即兌換</button></div>`;else if(phase==='popup')html+=`<div class="ws-card ws-stack"><h2>${p.lastResult==='成功'?'✓ 兌換成功！':'✕ 兌換失敗！'}</h2><div>消耗時間：${p.lastDuration||0} 秒</div><div>${p.lastResult==='成功'?'準確率：100%':'準確率：依驗證碼相符位數計算'}</div><button class="ws-green" onclick="wsNext()">確認</button><p class="ws-muted">2 秒後自動進入下一次</p></div>`;else if(phase==='done')html+=`<div class="ws-card"><h2>已完成目標！</h2><p>等待另一位玩家完成...</p></div>`}
+}else if(wsPage==='result'){const r=wsRoom||{},w=r.players?.wing,st=r.players?.stars;html=`<div class="ws-card ws-stack"><h2>比賽結束</h2><h3>${r.winner==='none'?'雙方失敗，無勝利者':r.winner==='tie'?'平手':r.winner==='wing'?'Wing 隊獲勝！':'Stars 隊獲勝！'}</h3><div class="ws-columns"><div>Wing 隊<div class="ws-big">${wsScoreText(w)}</div><small>成功 ${w?.success||0} / 失敗 ${w?.fail||0}</small></div><div>Stars 隊<div class="ws-big">${wsScoreText(st)}</div><small>成功 ${st?.success||0} / 失敗 ${st?.fail||0}</small></div></div><button class="ws-gray" onclick="wsExit()">回到主頁面</button><button class="ws-green" onclick="wsRematch()">重新一局</button><button class="ws-white" onclick="wsNewRoom()">重開房間</button></div>`}c.classList.toggle('ws-center',wsPage==='entry'||wsPage==='join');c.innerHTML=msg+html;}
+setInterval(()=>{if(W('ws-app')?.style.display!=='flex'||!wsRoom||wsRoom.status!=='playing')return;const rem=W('ws-remaining');if(rem)rem.textContent=wsRemaining().toFixed(1);const elapsed=W('ws-elapsed');if(elapsed&&wsActiveAttempt)elapsed.textContent=((performance.now()-wsAttemptStart)/1000).toFixed(2);if(wsRole==='wing')wsCheckEnd();if(wsRoom.mode==='timed'&&wsRemaining()<=0&&wsRole!=='jenny'&&wsRoom.players?.[wsRole]?.phase==='detail')wsRender();},300);
+// Attempt a rejoin after anonymous auth is restored in the same browser.
+window.addEventListener('pagehide',()=>{if(wsDB&&wsRoomId&&wsRole){const p=wsRole==='jenny'?'spectator':'players/'+wsRole;wsRoomRef().child(p+'/online').set(false).catch(()=>{})}});
+</script>
+</body>
+</html>
