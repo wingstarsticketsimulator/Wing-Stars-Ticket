@@ -162,21 +162,193 @@ body{min-height:0;align-items:stretch;background:#f9f9f9}
 #difficulty-hint{position:absolute;right:calc(100% + 8px);top:50%;transform:translateY(-50%);color:#fff;font-size:10px;line-height:1;white-space:nowrap;pointer-events:none;opacity:0;z-index:1}
 #difficulty-hint.play{animation:difficulty-hint-fade 1.5s ease-out both}
 @keyframes difficulty-hint-fade{0%,66.666%{opacity:1}100%{opacity:0}}
+
+
+/* Beta10 integrated fixes */
+.vk-key{color:#171717!important;touch-action:manipulation;-webkit-user-select:none;user-select:none}
+.vk-key:active,.vk-key.ws-key-down{background:#bcbcbc!important;color:#171717!important}
+#ws-app .ws-columns{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;width:100%}
+#ws-app .ws-spectator{width:100%;max-width:none;text-align:center}
+#ws-app .ws-spectator h2{font-size:clamp(27px,7vw,40px)}
+#ws-app .ws-spectator .ws-card{padding:12px 2px;margin:0;min-width:0;font-size:clamp(13px,3.7vw,18px);overflow-wrap:anywhere}
+#ws-app .ws-spectator .ws-card>b{font-size:clamp(20px,5.2vw,28px)}
+#ws-app .ws-spectator .ws-muted{font-size:clamp(12px,3.1vw,16px)}
+#ws-app .ws-spectator .ws-digits{font-size:clamp(16px,4vw,23px)!important;letter-spacing:1px!important}
+#ws-app .ws-spectator .ws-card hr{border:0;border-top:1px solid #d9e4dc;margin:12px 0}
+#ws-app .ws-game-screen.ws-jenny-screen{padding:18px 12px;background:#fff}
+#ws-app .ws-modal-shade{position:fixed;inset:0;align-items:center;padding:16px 12px;z-index:35}
+#ws-app .ws-captcha-modal{width:min(320px,calc(100vw - 44px));max-height:calc(100dvh - 100px);overflow-y:auto;padding:18px 15px;transition:transform .18s ease;gap:8px}
+#ws-app .ws-modal-shade.ws-keyboard-visible .ws-captcha-modal{transform:translateY(calc(-1 * min(25vh,170px)))}
+#ws-app #ws-game-keyboard{position:fixed;z-index:45;bottom:0;left:0;width:100%;overflow:hidden;pointer-events:none}
+#ws-app #ws-game-keyboard .ws-game-keyboard{max-width:none;width:100%;margin:0;transform:translateY(110%);visibility:hidden;display:flex;transition:transform .18s ease,visibility 0s linear .18s;pointer-events:none}
+#ws-app #ws-game-keyboard .ws-game-keyboard.open{transform:translateY(0);visibility:visible;pointer-events:auto;transition:transform .18s ease,visibility 0s}
+#ws-app .ws-captcha-modal .modal-btn.cancel{background:#fff;color:#145335;border:1.5px solid #145335}
+#ws-app .ws-captcha-modal .modal-btn.submit:disabled{background:#bfc2c0!important;color:white!important;opacity:1}
+#ws-app .ws-captcha-modal .modal-btn.submit:not(:disabled){background:#18834a!important;color:#fff!important}
+#ws-app .ws-clock{font-variant-numeric:tabular-nums;white-space:nowrap;font-size:clamp(12px,3.5vw,16px)}
+#ws-app .ws-waiting{font-weight:700;text-align:center;padding:18px;color:#145335}
+@media(max-height:700px){#ws-app .ws-modal-shade.ws-keyboard-visible .ws-captcha-modal{transform:translateY(-20vh)}#ws-app .ws-captcha-modal{padding:12px}}
+
+/* Beta10 responsive spectator, popup and keyboard positioning */
+#ws-app .ws-modal-shade:has(.ws-beta10-result){align-items:center!important;padding:12px!important}
+#ws-app .ws-beta10-result{margin:auto}
+#ws-app .ws-game-screen.ws-jenny-screen{padding:12px 8px 24px!important;overflow-x:hidden}
+#ws-app .ws-spectator{max-width:100%!important;width:100%!important;gap:12px!important}
+#ws-app .ws-spectator h2{font-size:clamp(26px,7vw,38px);margin:0}
+#ws-app .ws-watch-mode{font-size:clamp(15px,4vw,19px);font-weight:600;margin:3px 0 8px}
+#ws-app .ws-spectator .ws-columns{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));width:100%;gap:8px;align-items:start}
+#ws-app .ws-watch-column{display:flex;flex-direction:column;align-items:center;text-align:center;min-width:0;gap:5px;padding:10px 2px 14px;background:transparent;border:0;box-shadow:none}
+#ws-app .ws-watch-column h3{font-size:clamp(21px,5.6vw,29px);margin:0 0 4px;color:#14452f}
+#ws-app .ws-watch-state{font-size:clamp(13px,3.6vw,17px);font-weight:650;color:#4c6a5a;min-height:25px}
+#ws-app .ws-watch-label{font-size:clamp(12px,3.3vw,15px);color:#666;margin-top:7px}
+#ws-app .ws-watch-digits{font-size:clamp(17px,4.8vw,25px);font-weight:750;letter-spacing:.6px;overflow-wrap:anywhere;line-height:1.35}
+#ws-app .ws-watch-value{font-size:clamp(16px,4vw,21px);font-weight:650}
+#ws-app .ws-watch-record{border-top:1px solid #b7cbbf;width:100%;padding-top:13px;margin-top:12px;font-size:clamp(14px,3.7vw,19px);font-weight:700;white-space:nowrap}
+#ws-app .ws-watch-score{font-size:clamp(25px,7vw,38px);font-weight:800;color:#145335;font-variant-numeric:tabular-nums}
+#ws-app .ws-modal-shade:has(.ws-captcha-modal){padding:0!important;align-items:flex-start!important}
+#ws-app .ws-captcha-modal{position:absolute;top:var(--ws-dialog-top,50%);left:50%;transform:translateX(-50%)!important;width:min(340px,calc(100vw - 36px));padding:16px 14px;gap:8px;max-height:calc(100dvh - 24px);overflow-y:auto}
+#ws-app .ws-modal-shade.ws-keyboard-visible .ws-captcha-modal{transform:translateX(-50%)!important}
+#ws-app .ws-result-modal.ws-beta10-result{width:min(340px,calc(100vw - 42px));gap:7px;padding:25px 18px 20px}
+#ws-app .ws-beta10-result .ws-result-icon{font-size:42px;line-height:1.2}
+#ws-app .ws-beta10-result .ws-result-icon.ws-failure{color:#ed2222}
+#ws-app .ws-beta10-result .ws-result-icon.ws-success{color:#23803d}
+#ws-app .ws-beta10-result h3{font-size:21px;color:#303030;margin:0 0 5px}
+#ws-app .ws-beta10-result p{font-size:15px;margin:2px 0;color:#333}
+#ws-app .ws-beta10-result p.ws-overlimit{color:#e22;font-weight:650}
+#ws-app .ws-beta10-result button{margin-top:13px;min-height:40px;border:1.5px solid #145335;color:#145335;background:white;border-radius:8px}
+#ws-app .ws-game-keyboard .vk-key{color:#161616!important;background:#fff!important;touch-action:manipulation}
+#ws-app .ws-game-keyboard .vk-key.ws-key-down,#ws-app .ws-game-keyboard .vk-key:active{background:#bcbcbc!important;color:#161616!important}
+</style>
+
+<style>
+#ws-app{display:none;position:absolute;inset:0;background:#f7faf7;z-index:650;overflow:auto;color:#183d2c;font-family:system-ui,-apple-system,sans-serif}
+#ws-app *{box-sizing:border-box}#ws-app .ws-top{background:#154d32;color:white;padding:15px 14px;display:flex;justify-content:space-between;align-items:center;gap:8px;position:sticky;top:0;z-index:2}
+#ws-app .ws-main{padding:16px;max-width:540px;margin:auto}#ws-app .ws-card{background:white;border:1px solid #dce8de;border-radius:13px;padding:16px;margin:12px 0;box-shadow:0 2px 7px #1232}
+#ws-app button{border:0;border-radius:9px;padding:12px 15px;font-weight:700;cursor:pointer}#ws-app button:disabled{opacity:.45;cursor:not-allowed}
+#ws-app .ws-green{background:#18834a;color:white}#ws-app .ws-white{background:white;color:#18834a;border:1px solid #18834a}#ws-app .ws-gray{background:#e6e9e7;color:#45534a}
+#ws-app .ws-stack{display:grid;gap:10px}#ws-app input,#ws-app select{width:100%;padding:12px;border:1px solid #c5d6ca;border-radius:8px;font-size:16px;background:white;color:#123}
+#ws-app .ws-muted{color:#718075;font-size:12px}#ws-app .ws-link{color:#88918b;font-size:12px;text-align:center;text-decoration:underline;cursor:pointer;padding:8px}
+#ws-app .ws-columns{display:grid;grid-template-columns:1fr 1fr;gap:10px}#ws-app .ws-big{font-size:26px;font-weight:800;font-variant-numeric:tabular-nums}
+#ws-app .ws-digits{letter-spacing:5px;font-size:24px;text-align:center;font-weight:800;font-variant-numeric:tabular-nums}
+#ws-app .ws-keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}#ws-app .ws-keypad button{font-size:22px;background:#e9f0ec}
+#ws-app .ws-scroll{max-height:65vh;overflow:auto}#ws-app .ws-tag{display:inline-block;padding:4px 9px;border-radius:15px;background:#e6f3ea;font-size:12px}
+
+/* Beta2: restore centered settings and move compact mode menu to the original subtitle */
+#page-home .ws-home-top{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;gap:8px}
+#page-home .ws-home-top .home-options-trigger{grid-column:2;justify-self:center}
+#page-home .ws-home-top .my-points{grid-column:3;justify-self:end;white-space:nowrap}
+#page-home .ws-home-top>div:first-child{grid-column:1;min-width:0}
+#page-home .header-info{overflow:visible}
+.ws-mode-title{position:relative;display:flex;align-items:center;gap:5px;min-width:0;font-size:14px;font-weight:700}
+#ws-current-mode{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer;touch-action:manipulation}
+#ws-mode-toggle{border:0;border-radius:0;background:transparent;color:#fff;min-width:18px;width:18px;height:26px;padding:0;box-shadow:none;appearance:none;-webkit-appearance:none;font-size:17px;line-height:1;cursor:pointer;flex-shrink:0}
+.ws-mode-menu{position:absolute;left:0;top:calc(100% + 8px);width:max-content;max-width:min(290px,85vw);background:white;border:1px solid #d6e4d9;border-radius:9px;box-shadow:0 6px 18px #0003;z-index:80;padding:5px}
+.ws-mode-menu[hidden]{display:none}
+.ws-mode-menu button{display:block;width:100%;border:0;background:white;color:#14452f;text-align:left;font-size:13px;padding:11px;border-radius:6px;white-space:nowrap}
+.ws-mode-menu button:active{background:#edf5ef}
+
+/* Beta4: non-layout-shifting, auto-expiring, page-scoped warning */
+#ws-app .ws-notice{position:absolute;top:76px;left:50%;transform:translateX(-50%);width:calc(100% - 32px);max-width:508px;z-index:20;background:#fff;border:1px solid #f0d6d0;border-radius:13px;box-shadow:0 5px 16px #0002;color:#b33420;padding:14px 16px;font-size:15px;font-weight:600;line-height:1.5;pointer-events:none;animation:ws-notice-in .12s ease-out}
+#ws-app .ws-notice[hidden]{display:none}
+@keyframes ws-notice-in{from{opacity:0;transform:translate(-50%,-5px)}to{opacity:1;transform:translate(-50%,0)}}
+/* Beta3: centered, frameless competition entry and join pages */
+#ws-app{display:none;flex-direction:column;overflow:hidden}
+#ws-app .ws-top{flex:0 0 auto}
+#ws-app .ws-main{flex:1;min-height:0;overflow-y:auto;width:100%;max-width:540px;margin:0 auto;padding:18px 16px 28px;-webkit-overflow-scrolling:touch}
+#ws-app .ws-main.ws-center{display:flex;flex-direction:column;justify-content:center}
+#ws-app .ws-plain{width:100%;display:grid;gap:14px;padding:8px 0;background:transparent;border:0;box-shadow:none}
+#ws-app .ws-plain h2{text-align:center;margin:0 0 12px;font-size:26px;line-height:1.3}
+#ws-app .ws-plain>button{min-height:52px;font-size:16px}
+#ws-app .ws-plain .ws-link{margin-top:3px;line-height:1.6}
+#ws-app .ws-rules{max-width:100%;background:white;border:1px solid #dce8de;border-radius:14px;padding:22px 18px;box-shadow:0 2px 7px #1232}
+#ws-app .ws-rules h2{font-size:23px;line-height:1.4;margin:0 0 12px}
+#ws-app .ws-rule-section{padding:16px 0;border-top:1px solid #e4ece6}
+#ws-app .ws-rule-section h3{font-size:19px;line-height:1.4;margin:0 0 12px}
+#ws-app .ws-rule-section p{font-size:15px;line-height:1.85;margin:0 0 12px;letter-spacing:.2px}
+#ws-app .ws-rule-section p:last-child{margin-bottom:0}
+#ws-app .ws-rule-close{width:100%;margin:16px 0 4px}
+@media(max-width:370px){#page-home .ws-home-top{gap:3px}#page-home .ws-home-top>div:first-child span{font-size:9px!important}#page-home .ws-home-top .home-options-trigger{padding:6px 9px} .ws-mode-title{font-size:12px}}
+
+/* Full-width centered competition, no extra cards */
+#ws-app{touch-action:manipulation}#ws-app button,#ws-app .vk-key,#ws-app select{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+#ws-app .ws-main{max-width:none;padding:14px 18px 26px}#ws-app .ws-main.ws-center{justify-content:center;align-items:center}
+#ws-app .ws-plain{width:100%;max-width:560px;text-align:center;gap:15px;padding:8px 0}
+#ws-app .ws-plain h2{font-size:clamp(25px,7vw,34px);margin-bottom:6px}#ws-app .ws-plain h3{font-size:22px}
+#ws-app .ws-plain>button{width:100%;min-height:51px;font-size:17px}
+#ws-app .ws-card,#ws-app .ws-rules{background:transparent;border:0;box-shadow:none;padding:8px 0;border-radius:0}
+#ws-app .ws-player-status{display:grid;gap:7px;font-size:16px;text-align:center}
+#ws-app .ws-lobby label{display:grid;gap:6px;text-align:center;font-size:15px;font-weight:650}
+#ws-app .ws-lobby select{text-align:center;text-align-last:center}
+#ws-app .ws-copy{background:#e1e4e2;transition:background .12s}#ws-app .ws-copy:active,#ws-app .ws-copy.ws-pressed{background:#a8afaa}
+#ws-app .ws-white{border:1.5px solid #18834a;background:transparent;color:#18834a}
+#ws-app .ws-green{background:#18834a;color:white}
+#ws-app .ws-tag{font-size:12px;vertical-align:middle}
+#ws-app .ws-final .ws-columns{margin:24px 0;gap:15px}#ws-app .ws-final .ws-big{font-size:clamp(29px,9vw,45px);margin:8px 0}#ws-app .ws-final small{font-size:13px}
+#ws-app .ws-final h3{font-size:clamp(23px,6vw,31px)}
+#ws-app .ws-detail-top{background:#14452f;color:white;display:flex;justify-content:space-between;align-items:center;padding:12px 15px;font-size:15px}
+#ws-app .ws-game-screen{padding:0;max-width:none;display:block;text-align:left;background:#fff}
+#ws-app .ws-detail-body{padding:12px 16px 18px;display:flex;flex-direction:column;min-height:calc(100% - 48px)}
+#ws-app .ws-competition-banner{background:#c8e6c9;border-radius:10px;min-height:145px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;gap:5px;color:#14452f;font-size:13px;margin-bottom:14px;padding:12px 5px}
+#ws-app .ws-competition-banner strong{font-size:clamp(22px,6vw,29px)}
+#ws-app .ws-detail-body>h3{font-size:16px;margin:0 0 13px;color:#14452f}
+#ws-app .ws-points{display:flex;justify-content:space-between;background:#f5f5f5;border-radius:8px;padding:12px;margin-bottom:13px;font-size:15px}
+#ws-app .ws-detail-info{margin-bottom:12px;display:grid;gap:3px;font-size:13px}#ws-app .ws-detail-info small{color:#777;font-size:12px}
+#ws-app .ws-redeem{margin-top:auto;width:100%;font-size:16px;min-height:48px}
+#ws-app .ws-loading{font-size:12px;background:#fff3e0;color:#666;text-align:center;padding:7px;margin:-12px -16px 12px}
+#ws-app .ws-modal-shade{position:absolute;inset:0;z-index:35;background:#0008;display:flex;align-items:flex-start;justify-content:center;padding:110px 12px 0}
+#ws-app .ws-captcha-modal,#ws-app .ws-result-modal{background:#fff;border-radius:16px;padding:20px;width:min(340px,95%);display:flex;flex-direction:column;align-items:center;text-align:center;gap:9px}
+#ws-app .ws-captcha-modal .captcha-input-container{width:100%;margin:8px 0 0}#ws-app .ws-captcha-modal .refresh-row{width:100%;margin:0 0 5px}
+#ws-app .ws-captcha-modal .modal-buttons{width:100%}#ws-app .ws-captcha-modal .modal-btn{padding:10px 6px}
+#ws-app .ws-result-modal{gap:11px}#ws-app .ws-result-modal h3{font-size:19px}#ws-app .ws-result-icon{font-size:38px;color:#18834a}
+#ws-app .ws-result-modal>button{width:100%}
+#ws-app #ws-game-keyboard{position:absolute;bottom:0;left:0;width:100%;z-index:45;pointer-events:none}
+#ws-app #ws-game-keyboard .ws-game-keyboard{position:relative;transform:none;visibility:visible;pointer-events:auto;max-width:450px;margin:auto}
+#ws-app #ws-game-keyboard .ws-game-keyboard:not(.open){display:none}
+#ws-app .ws-notice{z-index:80}
+#ws-copy-toast{position:absolute;top:65px;left:50%;transform:translate(-50%,-150%);opacity:0;background:#2d4237;color:white;border-radius:10px;padding:10px 22px;z-index:90;pointer-events:none;transition:transform .23s ease,opacity .23s ease;white-space:nowrap;font-size:14px}
+#ws-copy-toast.ws-show{transform:translate(-50%,0);opacity:1}
+@media(max-height:750px){#ws-app .ws-detail-info{margin-bottom:7px}#ws-app .ws-competition-banner{min-height:110px}#ws-app .ws-modal-shade{padding-top:70px}}
+
+
+/* Beta10 integrated fixes */
+.vk-key{color:#171717!important;touch-action:manipulation;-webkit-user-select:none;user-select:none}
+.vk-key:active,.vk-key.ws-key-down{background:#bcbcbc!important;color:#171717!important}
+#ws-app .ws-columns{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;width:100%}
+#ws-app .ws-spectator{width:100%;max-width:none;text-align:center}
+#ws-app .ws-spectator h2{font-size:clamp(27px,7vw,40px)}
+#ws-app .ws-spectator .ws-card{padding:12px 2px;margin:0;min-width:0;font-size:clamp(13px,3.7vw,18px);overflow-wrap:anywhere}
+#ws-app .ws-spectator .ws-card>b{font-size:clamp(20px,5.2vw,28px)}
+#ws-app .ws-spectator .ws-muted{font-size:clamp(12px,3.1vw,16px)}
+#ws-app .ws-spectator .ws-digits{font-size:clamp(16px,4vw,23px)!important;letter-spacing:1px!important}
+#ws-app .ws-spectator .ws-card hr{border:0;border-top:1px solid #d9e4dc;margin:12px 0}
+#ws-app .ws-game-screen.ws-jenny-screen{padding:18px 12px;background:#fff}
+#ws-app .ws-modal-shade{position:fixed;inset:0;align-items:center;padding:16px 12px;z-index:35}
+#ws-app .ws-captcha-modal{width:min(320px,calc(100vw - 44px));max-height:calc(100dvh - 100px);overflow-y:auto;padding:18px 15px;transition:transform .18s ease;gap:8px}
+#ws-app .ws-modal-shade.ws-keyboard-visible .ws-captcha-modal{transform:translateY(calc(-1 * min(25vh,170px)))}
+#ws-app #ws-game-keyboard{position:fixed;z-index:45;bottom:0;left:0;width:100%;overflow:hidden;pointer-events:none}
+#ws-app #ws-game-keyboard .ws-game-keyboard{max-width:none;width:100%;margin:0;transform:translateY(110%);visibility:hidden;display:flex;transition:transform .18s ease,visibility 0s linear .18s;pointer-events:none}
+#ws-app #ws-game-keyboard .ws-game-keyboard.open{transform:translateY(0);visibility:visible;pointer-events:auto;transition:transform .18s ease,visibility 0s}
+#ws-app .ws-captcha-modal .modal-btn.cancel{background:#fff;color:#145335;border:1.5px solid #145335}
+#ws-app .ws-captcha-modal .modal-btn.submit:disabled{background:#bfc2c0!important;color:white!important;opacity:1}
+#ws-app .ws-captcha-modal .modal-btn.submit:not(:disabled){background:#18834a!important;color:#fff!important}
+#ws-app .ws-clock{font-variant-numeric:tabular-nums;white-space:nowrap;font-size:clamp(12px,3.5vw,16px)}
+#ws-app .ws-waiting{font-weight:700;text-align:center;padding:18px;color:#145335}
+@media(max-height:700px){#ws-app .ws-modal-shade.ws-keyboard-visible .ws-captcha-modal{transform:translateY(-20vh)}#ws-app .ws-captcha-modal{padding:12px}}
 </style>
 </head>
 <body>
 <div class="phone-container">
 <div id="page-home" style="display:flex;flex-direction:column;height:100%">
-<div class="top-bar"><div style="display:flex;align-items:center;gap:7px"><div class="back-btn">←</div><span style="font-size:11px;opacity:.85">v1.1.1</span></div><button class="home-options-trigger" onclick="openOptions()">設定</button><div class="my-points" role="button" tabindex="0" onclick="openRecords()">我的紀錄</div></div>
-<div class="header-info"><span>9/13Wing Stars 賽前簽名會</span><div class="clock-box" id="clock-trigger" title="點擊設定時間"><span id="difficulty-hint" aria-hidden="true">點擊調整難度→</span><div id="live-time">12:59:52.83</div><div id="countdown-display" class="countdown-line" style="display:none"></div></div></div>
+<div class="top-bar ws-home-top"><div style="display:flex;align-items:center;gap:7px"><div class="back-btn">←</div><span style="font-size:11px;opacity:.85">v1.2.0</span></div><button class="home-options-trigger" onclick="openOptions()">設定</button><div class="my-points" role="button" tabindex="0" onclick="openRecords()">我的紀錄</div></div>
+<div class="header-info"><div class="ws-mode-title"><span id="ws-current-mode" role="button" tabindex="0" onclick="wsToggleModeMenu()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();wsToggleModeMenu()}">Wing Stars模擬簽名會</span><button id="ws-mode-toggle" type="button" aria-label="切換遊戲模式" aria-expanded="false" onclick="wsToggleModeMenu()">⌄</button><div id="ws-mode-menu" class="ws-mode-menu" hidden><button onclick="wsChooseMode('solo')">Wing Stars模擬簽名會</button><button onclick="wsChooseMode('multi')">競賽模式</button></div></div><div class="clock-box" id="clock-trigger" title="點擊設定時間"><span id="difficulty-hint" aria-hidden="true">點擊調整難度→</span><div id="live-time">12:59:52.83</div><div id="countdown-display" class="countdown-line" style="display:none"></div></div></div>
 <div class="content">
 <div class="banner-card">
-<img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='800' height='450' viewBox='0 0 800 450'><rect width='800' height='450' fill='%2314452F'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' font-size='24' fill='%23ffffff'>Wing Stars 橫向大合照 (不可按)</text></svg>" class="banner-img" alt="banner">
-<div class="banner-text"><div class="banner-title">9/13Wing Stars 賽前簽名會</div><p>參加方式：APP點數兌換60點 (單一帳號僅限兌換一次)<br>•9/8 (二) 12：00起開放兌換鷹國皇家會員，共10個名額，換完為止...</p></div><div class="see-more">查看更詳細 ∨</div>
+<img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='800' height='450' viewBox='0 0 800 450'><rect width='800' height='450' fill='%2314452F'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' font-size='24' fill='%23ffffff'>Wing Stars模擬簽名會</text></svg>" class="banner-img" alt="banner">
+<div class="banner-text"><div class="banner-title">Wing Stars模擬簽名會</div><p>參加方式：APP點數兌換60點 (單一帳號僅限兌換一次)<br>•9/8 (二) 12：00起開放兌換鷹國皇家會員，共10個名額，換完為止...</p></div><div class="see-more">查看更詳細 ∨</div>
 </div>
 <div class="filter-bar"><div id="challenge-stats" class="challenge-stats" style="display:none"><span>挑戰成功次數：<span id="challenge-success">0</span>/<span id="challenge-total">0</span><span id="challenge-rate">（0%）</span></span><button type="button" id="challenge-reset" aria-label="重整目前模式挑戰統計" title="重整目前模式挑戰統計" onclick="resetChallengeStats()">↻</button></div><span>日期舊到新 ↕</span></div>
-<div class="item-card" onclick="goToDetail(0)"><div class="item-tag">鷹國皇家</div><div class="item-header"><img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'><rect width='200' height='200' fill='%23a5d6a7'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' font-size='16' fill='%2314452F'>簽名會主視覺</text></svg>" class="item-thumb" alt="thumb"><div class="item-info"><p style="font-weight:bold;color:#2e7d32">2026/09/08 (二)</p><h4>9/13 Wing Stars 賽前簽名會 (鷹國皇家會員專屬)</h4></div></div></div>
-<div class="item-card" onclick="goToDetail(1)"><div class="item-header"><img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'><rect width='200' height='200' fill='%23a5d6a7'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' font-size='16' fill='%2314452F'>簽名會主視覺</text></svg>" class="item-thumb" alt="thumb"><div class="item-info"><p style="font-weight:bold;color:#2e7d32">2026/09/08 (二)</p><h4>9/13 Wing Stars 賽前簽名會</h4></div></div></div>
+<div class="item-card" onclick="goToDetail(0)"><div class="item-tag">鷹國皇家</div><div class="item-header"><img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'><rect width='200' height='200' fill='%23a5d6a7'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' font-size='16' fill='%2314452F'>簽名會主視覺</text></svg>" class="item-thumb" alt="thumb"><div class="item-info"><p style="font-weight:bold;color:#2e7d32"><span class="ws-yesterday"></span></p><h4>Wing Stars 賽前簽名會 (鷹國皇家會員專屬)</h4></div></div></div>
+<div class="item-card" onclick="goToDetail(1)"><div class="item-header"><img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'><rect width='200' height='200' fill='%23a5d6a7'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' font-size='16' fill='%2314452F'>簽名會主視覺</text></svg>" class="item-thumb" alt="thumb"><div class="item-info"><p style="font-weight:bold;color:#2e7d32"><span class="ws-yesterday"></span></p><h4>Wing Stars 賽前簽名會</h4></div></div></div>
 </div></div>
 
 <div id="page-records">
@@ -193,9 +365,9 @@ body{min-height:0;align-items:stretch;background:#f9f9f9}
 <div class="loading-status" id="loading-status">正在刷新...</div>
 <div class="detail-content">
 <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='800' height='450' viewBox='0 0 800 450'><rect width='800' height='450' fill='%23c8e6c9'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' font-size='20' fill='%2314452F'>2026 Wing Stars 賽前簽名會</text></svg>" class="detail-img" alt="活動圖片">
-<h3 id="detail-main-title" style="margin-bottom:12px;font-size:16px;color:#14452F">9/13 Wing Stars 賽前簽名會</h3>
+<h3 id="detail-main-title" style="margin-bottom:12px;font-size:16px;color:#14452F">Wing Stars 賽前簽名會</h3>
 <div class="points-box"><span>兌換點數</span><span>60 點</span></div>
-<div class="info-row"><div class="info-label">兌換期間</div><div class="info-value">2026/09/08 13:00 ~ 2026/09/13 23:00</div></div>
+<div class="info-row"><div class="info-label">兌換期間</div><div class="info-value"><span class="ws-yesterday"></span> 13:00 ~ <span class="ws-yesterday"></span> 23:00</div></div>
 <div class="info-row"><div class="info-label">兌換資格</div><div class="info-value" id="detail-qualification">所有會員皆適用</div></div>
 <div class="info-row"><div class="info-label">兌換上限</div><div class="info-value">1次</div></div>
 <div class="info-row"><div class="info-label">全站數量</div><div class="info-value">50</div></div>
@@ -255,6 +427,11 @@ body{min-height:0;align-items:stretch;background:#f9f9f9}
 </div></div>
 </div>
 
+
+<div id="ws-app"><div class="ws-top"><button class="ws-gray" onclick="wsBack()">←</button><b>Wing Stars 競賽模式 <small>正式版</small></b><span id="ws-online">連線中</span></div><div id="ws-copy-toast" role="status">複製成功！</div><div id="ws-notice" class="ws-notice" role="alert" aria-live="assertive" hidden></div><div id="ws-content" class="ws-main"></div></div>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
 <script>
 let appState = {
 targetTimeEnabled:false,targetTimestamp:null,consumptionLimit:5.5,startTime:null,captchaLoadToken:0,pausedSubmitMs:0,
@@ -400,6 +577,7 @@ function updateElapsedDisplay(){
  el.className=appState.elapsedResultConfirmed?(appState.lastResultStatus==="success"?"elapsed-success":"elapsed-fail"):"";
 }
 function goToDetail(cardType){
+wsCloseModeMenu();
 isFirstOpenCaptcha=true;
 appState.lastResultStatus=null;
 appState.selectedCardType=cardType;
@@ -415,11 +593,11 @@ document.getElementById("page-detail").style.display="flex";
 requestAnimationFrame(updateScrollModes);
 updateElapsedDisplay();
 if(cardType===0){
-document.getElementById("detail-main-title").innerText="9/13 Wing Stars 賽前簽名會 (鷹國皇家會員專屬)";
+document.getElementById("detail-main-title").innerText="Wing Stars 賽前簽名會 (鷹國皇家會員專屬)";
 document.getElementById("detail-nav-title").innerText="活動詳情";
 document.getElementById("detail-qualification").innerText="鷹國皇家會員專屬";
 }else{
-document.getElementById("detail-main-title").innerText="9/13 Wing Stars 賽前簽名會";
+document.getElementById("detail-main-title").innerText="Wing Stars 賽前簽名會";
 document.getElementById("detail-nav-title").innerText="活動詳情";
 document.getElementById("detail-qualification").innerText="所有會員皆適用";
 }
@@ -441,6 +619,7 @@ else{actionBtn.onclick=openCaptchaModal;actionBtn.disabled=false;}
 },loadTime);
 }
 function goBackHome(){
+wsCloseModeMenu();
 isFirstOpenCaptcha=true;
 appState.detailLoadToken++;
 document.getElementById("page-detail").style.display="none";
@@ -579,6 +758,8 @@ document.addEventListener("DOMContentLoaded",updateViewport);
 updateViewport();
 const keys=document.querySelectorAll(".vk-key");
 keys.forEach(key=>{
+key.addEventListener("pointerdown",()=>key.classList.add("ws-key-down"));
+["pointerup","pointercancel","pointerleave"].forEach(ev=>key.addEventListener(ev,()=>key.classList.remove("ws-key-down")));
 const handleKeyPress=e=>{e.preventDefault();e.stopPropagation();const keyValue=key.getAttribute("data-key");pressKey(keyValue);};
 key.addEventListener("click",handleKeyPress);
 });
@@ -757,6 +938,267 @@ function resultHomeAction(){
 document.getElementById("result-modal").style.display="none";
 goBackHome();
 }
+</script>
+
+<script>
+// Wing Stars v1.2.0 — competition is isolated from the original solo engine.
+const wsConfig={apiKey:'AIzaSyBFYmxgGoM3Se7E5ZTqWwKpJ2cLSkrkt9g',authDomain:'wing-stars-ticket-simulator.firebaseapp.com',databaseURL:'https://wing-stars-ticket-simulator-default-rtdb.asia-southeast1.firebasedatabase.app',projectId:'wing-stars-ticket-simulator',appId:'1:810142393791:web:0737b6e67df86554e42d0a',messagingSenderId:'810142393791'};
+let wsSettlementErrorShown=false,wsLocalFinished=false;let wsJoinBusy=false,wsJoinGeneration=0,wsSession=0,wsLeaving=false,wsHostExitTimer=null,wsResultCache=null,wsResultRound=0,wsRematchBusy=false,wsLastRoundReset=0;let wsHeartbeatTimer=null,wsFinalizing=false,wsRoundToken=0,wsFinalDeadline=0,wsKeyboardOpen=false,wsCountEndAt=0;let wsDB=null,wsAuth=null,wsUID=null,wsRoomId='',wsRole='',wsRoom=null,wsListener=null,wsAttemptStart=0,wsCaptcha='',wsTyped='',wsPage='entry',wsAutoTimer=null,wsActiveAttempt=false,wsLastAttempt=0,wsFinishHandled=false,wsConnected=false,wsError='',wsNoticeTimer=null,wsNoticeSerial=0;
+const W=e=>document.getElementById(e),wsEsc=t=>String(t??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const wsServerNow=()=>Date.now()+(wsDB?.ref('.info/serverTimeOffset')?wsOffset:0);let wsOffset=0;
+const wsRoomRef=()=>wsDB.ref('rooms/'+wsRoomId);
+function wsDates(){const d=new Date();d.setDate(d.getDate()-1);const str=`${d.getFullYear()}/${String(d.getMonth()+1).padStart(2,'0')}/${String(d.getDate()).padStart(2,'0')}`;document.querySelectorAll('.ws-yesterday').forEach(e=>e.textContent=str)}
+wsDates();
+// Beta3: always start on the original solo homepage, regardless of Firebase state.
+W('ws-app').style.display='none';
+async function wsInit(){if(wsDB&&wsUID)return true;try{if(!window.firebase)throw Error('無法載入 Firebase SDK，請確認網路');if(!firebase.apps.length)firebase.initializeApp(wsConfig);wsAuth=firebase.auth();wsDB=firebase.database();if(!wsAuth.currentUser)await wsAuth.signInAnonymously();wsUID=wsAuth.currentUser.uid;wsDB.ref('.info/serverTimeOffset').on('value',s=>wsOffset=s.val()||0);wsDB.ref('.info/connected').on('value',s=>{wsConnected=!!s.val();W('ws-online').textContent=wsConnected?'● 已連線':'○ 離線';});return true}catch(e){wsError=e.message;W('ws-online').textContent='連線失敗';return false}}
+function wsCloseModeMenu(){const menu=document.getElementById('ws-mode-menu'),toggle=document.getElementById('ws-mode-toggle');if(menu)menu.hidden=true;if(toggle)toggle.setAttribute('aria-expanded','false')}
+document.addEventListener('click',function(e){const title=document.querySelector('.ws-mode-title');if(title&&!title.contains(e.target))wsCloseModeMenu()});
+function wsToggleModeMenu(){const menu=W('ws-mode-menu'),open=menu.hidden;menu.hidden=!open;W('ws-mode-toggle').setAttribute('aria-expanded',String(open))}
+function wsChooseMode(v){wsClearNotice();W('ws-mode-menu').hidden=true;W('ws-mode-toggle').setAttribute('aria-expanded','false');W('ws-current-mode').textContent=v==='multi'?'競賽模式':'Wing Stars模擬簽名會';wsMode(v)}
+function wsMode(v){wsCloseModeMenu();wsClearNotice();if(v==='multi'){W('ws-app').style.display='flex';wsPage='entry';wsRender();wsInit().then(wsRender)}else wsExit()}
+function wsResetLocal(){
+ wsSession++;wsJoinGeneration++;clearTimeout(wsAutoTimer);clearTimeout(wsTypingTimer);clearTimeout(wsHostExitTimer);
+ wsActiveAttempt=false;wsKeyboardOpen=false;wsTyped='';wsCaptcha='';wsAttemptStart=0;wsCaptchaDeadline=0;
+ wsCountEndAt=0;wsFinalDeadline=0;wsFinalizing=false;wsSettlementErrorShown=false;wsLocalFinished=false;wsFinishHandled=false;wsResultCache=null;wsResultRound=0;
+}
+async function wsLeaveRoom(toHome=false){
+ const id=wsRoomId,role=wsRole,db=wsDB;
+ wsUnlisten();wsResetLocal();sessionStorage.removeItem('ws-rejoin');
+ wsRoomId='';wsRoom=null;wsRole='';wsPage='entry';wsRender();
+ if(toHome){W('ws-app').style.display='none';W('ws-current-mode').textContent='Wing Stars模擬簽名會';}
+ if(!id||!role||!db)return;
+ try{
+  const root=db.ref('rooms/'+id);
+  if(role==='wing')await root.child('hostLeft').set(Date.now());
+  else await root.child(role==='jenny'?'spectator/online':'players/'+role+'/online').set(false);
+ }catch(e){console.warn('離開房間同步失敗',e)}
+}
+function wsBack(){
+ wsCloseModeMenu();wsClearNotice();
+ if(wsPage==='game'&&wsRoom?.status==='playing'&&wsRemaining()>0&&!wsLocalFinished){wsNotice('比賽進行中不可返回');return;}
+ if(wsPage==='entry'){wsExit();return;}
+ if(wsPage==='lobby'||wsPage==='result'||(wsPage==='game'&&(wsRoom?.status==='finished'||wsRemaining()<=0||wsLocalFinished))){wsLeaveRoom(false);return;}
+ if(wsPage==='role'){wsUnlisten();wsResetLocal();wsRoomId='';wsRole='';wsRoom=null;wsPage='join';wsRender();return;}
+ wsPage='entry';wsRender();
+}
+function wsExit(){wsCloseModeMenu();wsClearNotice();wsLeaveRoom(true)}
+function wsUnlisten(){
+ clearTimeout(wsHeartbeatTimer);clearTimeout(wsAutoTimer);clearTimeout(wsHostExitTimer);
+ if(wsListener&&wsDB&&wsRoomId)wsRoomRef().off('value',wsListener);
+ wsListener=null;
+}
+function wsClearNotice(){
+  wsNoticeSerial++;
+  clearTimeout(wsNoticeTimer);
+  wsNoticeTimer=null;
+  wsError='';
+  const notice=W('ws-notice');
+  if(notice){notice.hidden=true;notice.textContent='';}
+}
+function wsNotice(s){
+  wsClearNotice();
+  wsError=String(s??'');
+  const notice=W('ws-notice');
+  if(!notice||W('ws-app').style.display==='none')return;
+  notice.textContent=wsError;
+  notice.hidden=false;
+  const serial=wsNoticeSerial;
+  wsNoticeTimer=setTimeout(()=>{if(serial===wsNoticeSerial)wsClearNotice()},2000);
+}
+function wsSetPage(p){wsClearNotice();wsPage=p;wsRender()}
+function wsRules(){wsSetPage('rules')}
+function wsEntry(){wsSetPage('entry')}
+function wsBase(){return `<div class="ws-plain"><h2>Wing Stars 競賽模式</h2><button class="ws-green" onclick="wsSetPage('join')">輸入房號</button><button class="ws-white" onclick="wsCreate()">創建房間</button><div class="ws-link" role="button" tabindex="0" onclick="wsRules()">遊戲規則與計分說明 ›</div></div>`}
+function wsRulesHtml(){return `<div class="ws-rules"><h2>遊戲規則與計分說明</h2><section class="ws-rule-section"><h3>基本規則</h3><p>每間房間最多 3 人，分別為 Wing 隊、Stars 隊與 Jenny 觀戰者。</p><p>Wing 與 Stars 進行搶票競賽，Jenny 可以即時觀看雙方進度。</p><p>驗證碼錯誤或超過指定時間，該次兌換直接失敗。</p><p>斷線後有 30 秒可以重新連線。</p></section><section class="ws-rule-section"><h3>限時模式</h3><p>比賽時間為 30 秒或 60 秒，在時間內盡可能完成更多次成功兌換。</p><p>成功次數越多、準確率越高，成績通常越好；失敗會影響分數。</p><p>時間結束後，已進入驗證碼畫面的玩家最多還有 10 秒完成最後一題。</p></section><section class="ws-rule-section"><h3>次數模式</h3><p>目標為成功兌換 10～20 次，最長比賽時間為 10 分鐘。</p><p>每次成功依驗證碼完成速度加權得分，失敗扣 20 分；達標後依雙方總積分判定勝負。</p><p>任一方達成目標後，等待已開始的最後一次兌換完成，再依總積分結算。</p></section><section class="ws-rule-section"><h3>其他規則</h3><p>比賽開始後不能中途返回。</p><p>重新一局時，雙方必須返回等待室並準備完成，才能再次開始。</p><p>成功得分＝100＋20×(單次限制－實際秒數)÷單次限制；失敗扣 20 分，同分平手。</p></section></div><button class="ws-gray ws-rule-close" onclick="wsEntry()">關閉說明</button>`}
+async function wsCreate(){if(!await wsInit())return wsNotice(wsError);try{const code=String(Math.floor(100000+Math.random()*900000));const room={owner:wsUID,createdAt:firebase.database.ServerValue.TIMESTAMP,status:'lobby',round:1,mode:'timed',duration:30,limit:5,goal:10,startedAt:0,players:{wing:{uid:wsUID,ready:false,online:true,success:0,fail:0,attempts:0,finishedAt:0,correct:'',typing:'',submitted:'',lastResult:'',phase:'waiting',lastSeen:Date.now()}},spectator:null};const ref=wsDB.ref('rooms/'+code);const tx=await ref.transaction(current=>current===null?room:undefined);if(!tx.committed)throw Error('房號衝突，請再試一次');wsJoinLocal(code,'wing')}catch(e){wsNotice('建立房間失敗：'+e.message)}}
+async function wsJoin(){
+ if(wsJoinBusy)return;
+ const code=(W('ws-code')?.value||'').trim();
+ if(!/^\d{6}$/.test(code))return wsNotice('請輸入六位數房號');
+ wsJoinBusy=true;const gen=++wsJoinGeneration;
+ const btn=W('ws-content')?.querySelector('.ws-green');if(btn){btn.disabled=true;btn.textContent='正在加入...'}
+ try{
+  const ready=await Promise.race([wsInit(),new Promise((_,reject)=>setTimeout(()=>reject(Error('連線逾時，請重試')),12000))]);
+  if(!ready)throw Error(wsError||'Firebase 連線失敗');
+  const snap=await Promise.race([wsDB.ref('rooms/'+code).once('value'),new Promise((_,reject)=>setTimeout(()=>reject(Error('房間讀取逾時，請重試')),12000))]);
+  if(gen!==wsJoinGeneration)return;
+  const r=snap.val();if(!r)throw Error('找不到房間');
+  if(r.hostLeft)throw Error('房主已離開');
+  if(r.players?.wing?.uid===wsUID)return wsJoinLocal(code,'wing');
+  if(r.players?.stars?.uid===wsUID)return wsJoinLocal(code,'stars');
+  if(r.spectator?.uid===wsUID)return wsJoinLocal(code,'jenny');
+  if(r.status!=='lobby')throw Error('比賽進行中，只允許原玩家返回');
+  wsResetLocal();wsRoomId=code;wsRoom=r;wsSetPage('role');
+ }catch(e){if(gen===wsJoinGeneration)wsNotice('加入失敗：'+e.message)}
+ finally{wsJoinBusy=false;const b=W('ws-content')?.querySelector('.ws-green');if(wsPage==='join'&&b){b.disabled=false;b.textContent='加入房間'}}
+}
+async function wsChoose(role){if(!wsRoomId)return;try{const path=role==='jenny'?'spectator':'players/stars';const ref=wsRoomRef().child(path);const tx=await ref.transaction(old=>(old===null||old?.uid===wsUID)?role==='jenny'?{uid:wsUID,online:true,lastSeen:Date.now()}:{uid:wsUID,ready:false,online:true,success:0,fail:0,attempts:0,finishedAt:0,correct:'',typing:'',submitted:'',lastResult:'',phase:'waiting',lastSeen:Date.now()}:undefined);if(!tx.committed)throw Error('此角色已有人選擇');wsJoinLocal(wsRoomId,role)}catch(e){wsNotice('選擇角色失敗：'+e.message)}}
+function wsJoinLocal(code,role){
+ wsUnlisten();wsResetLocal();wsRoomId=code;wsRole=role;wsPage='lobby';wsRoom=null;
+ const session=wsSession;
+ sessionStorage.setItem('ws-rejoin',JSON.stringify({code,role,uid:wsUID}));
+ wsListener=s=>{
+  if(session!==wsSession||code!==wsRoomId||role!==wsRole)return;
+  const oldRoom=wsRoom,oldPage=wsPage;wsRoom=s.val();
+  if(!wsRoom){wsNotice('房間已關閉');return}
+  if(wsRoom.hostLeft){wsHostGone();return}
+  const p=role==='jenny'?wsRoom.spectator:wsRoom.players?.[role];
+  if(p?.uid!==wsUID){wsNotice('角色身分不符');return}
+  if(wsRoom.round!==oldRoom?.round){
+   wsLocalFinished=false;wsSettlementErrorShown=false;
+   wsRoundToken=wsRoom.round;wsActiveAttempt=false;wsKeyboardOpen=false;wsTyped='';wsCaptcha='';wsAttemptStart=0;
+   wsCountEndAt=0;clearTimeout(wsAutoTimer);clearTimeout(wsTypingTimer);
+   if(oldRoom&&wsRoom.status==='lobby'&&role!=='jenny')wsResetOwnRound(wsRoom.round);
+  }
+  if(wsRoom.status==='finished'){
+   wsLocalFinished=true;wsSettlementErrorShown=false;
+   if(wsResultRound!==wsRoom.round){wsResultCache=null;wsResultRound=wsRoom.round}
+   if(wsRoom.finalScores&&!wsResultCache)wsResultCache=wsRoom.finalScores;
+   if(wsPage==='game'||(wsPage==='result'&&wsRole==='wing'))wsPage='result';
+   clearTimeout(wsAutoTimer);
+  }else if(wsRoom.status==='playing'){
+   if(wsLocalFinished){if(wsPage!=='result')wsPage='result';wsRender();return;}
+   if(wsPage!=='game'){wsPage='game';wsActiveAttempt=false;wsAttemptStart=0;
+    if(role!=='jenny'){
+     const delay=Math.max(0,wsRoom.startedAt-wsServerNow());
+     setTimeout(()=>{if(session===wsSession&&wsRoom?.status==='playing'&&wsPage==='game'&&!wsActiveAttempt)wsStartAttempt()},delay);
+    }
+   }
+  }else if(wsRoom.status==='lobby'){
+   if(role!=='jenny'&&wsLastRoundReset!==wsRoom.round&&oldRoom)wsResetOwnRound(wsRoom.round);
+   if(wsPage==='game')wsPage='lobby';
+   // Players can leave results individually. Never force the other player out of results.
+  }
+  if(wsPage==='game'&&oldPage==='game'&&role!=='jenny'&&oldRoom?.players?.[role]?.phase===wsRoom.players?.[role]?.phase){wsUpdateGameStats();return}
+  if(wsPage==='lobby'&&oldPage==='lobby'&&document.activeElement?.tagName==='SELECT'){wsUpdateLobbyStates();return}
+  wsRender();
+ };
+ wsRoomRef().on('value',wsListener,e=>wsNotice('房間讀取失敗：'+e.message));wsHeartbeat();
+}
+function wsHostGone(){
+ if(wsRole==='wing')return;
+ if(wsHostExitTimer)return;
+ const code=wsRoomId,session=wsSession;
+ wsPage='hostgone';wsRender();let seconds=5;
+ const tick=()=>{
+  if(wsSession!==session||wsRoomId!==code)return;
+  const el=W('ws-hostgone-count');if(el)el.textContent=String(seconds);
+  if(seconds<=0){wsExit();return}
+  seconds--;wsHostExitTimer=setTimeout(tick,1000);
+ };tick();
+}
+async function wsResetOwnRound(round){
+ if(wsRole==='jenny'||wsLastRoundReset===round)return;
+ wsLastRoundReset=round;
+ try{await wsRoomRef().child('players/'+wsRole).update({ready:false,success:0,fail:0,points:0,attempts:0,finishedAt:0,correct:'',typing:'',submitted:'',lastResult:'',lastDuration:0,lastAccuracy:0,phase:'waiting'});}catch(e){wsNotice('新一局重置失敗：'+e.message)}
+}
+async function wsHeartbeat(){if(!wsRoomId||!wsRole||!wsDB)return;const path=wsRole==='jenny'?'spectator':'players/'+wsRole;const myCode=wsRoomId,myRole=wsRole;const ref=wsRoomRef().child(path);try{await ref.child('online').set(true);await ref.child('lastSeen').set(firebase.database.ServerValue.TIMESTAMP);await ref.child('online').onDisconnect().set(false)}catch(e){}wsHeartbeatTimer=setTimeout(()=>{if(wsRoomId===myCode&&wsRole===myRole)wsHeartbeat()},5000)}
+async function wsConfigUpdate(k,v){if(wsRole!=='wing'||wsRoom?.status!=='lobby')return;try{await wsRoomRef().child(k).set(v)}catch(e){wsNotice(e.message)}}
+async function wsReady(){if(!wsRoomId||wsRole==='jenny')return;try{await wsRoomRef().child('players/'+wsRole+'/ready').set(!wsRoom.players[wsRole].ready)}catch(e){wsNotice(e.message)}}
+async function wsStart(){if(wsRole!=='wing'||!wsRoom?.players?.stars?.uid||!wsRoom.players.wing.ready||!wsRoom.players.stars.ready)return;try{await wsRoomRef().child('startedAt').set(wsServerNow());await wsRoomRef().child('status').set('playing')}catch(e){wsNotice(e.message)}}
+function wsClockText(){const d=new Date();return [d.getHours(),d.getMinutes(),d.getSeconds()].map(n=>String(n).padStart(2,'0')).join(':')+'.'+String(Math.floor(d.getMilliseconds()/10)).padStart(2,'0')}
+function wsRemaining(){if(!wsRoom)return 0;return Math.max(0,Math.min(wsRoom.mode==='timed'?wsRoom.duration:600,(wsRoom.startedAt+(wsRoom.mode==='timed'?wsRoom.duration*1000:600000)-wsServerNow())/1000))}
+function wsStartAttempt(){if(wsAttemptStart&&wsActiveAttempt)return;if(wsRole==='jenny'||!wsRoom||wsRoom.status!=='playing'||(wsRoom.mode==='count'&&((wsRoom.players?.wing?.success||0)>=wsRoom.goal||(wsRoom.players?.stars?.success||0)>=wsRoom.goal)))return;const p=wsRoom.players?.[wsRole];if(p?.finishedAt)return;const deadline=wsRoom.startedAt+(wsRoom.mode==='timed'?wsRoom.duration*1000:600000);if(wsServerNow()>=deadline)return;wsActiveAttempt=true;wsAttemptStart=performance.now();wsTyped='';wsKeyboardOpen=false;wsCaptcha='';clearTimeout(wsTypingTimer);wsPage='game';wsRoomRef().child('players/'+wsRole).update({phase:'loading',typing:'',correct:'',submitted:''}).catch(()=>{});wsRender();const session=wsSession,roomId=wsRoomId;setTimeout(()=>{if(session!==wsSession||roomId!==wsRoomId||!wsActiveAttempt||wsPage!=='game'||wsRoom?.status!=='playing')return;wsRoomRef().child('players/'+wsRole+'/phase').set('detail').catch(()=>{});wsRender()},600+Math.random()*400)}
+function wsOpenCaptcha(){if(!wsActiveAttempt||wsRoom?.players?.[wsRole]?.phase!=='detail'||wsRemaining()<=0)return;wsCaptcha=wsMakeCode();wsTyped='';wsKeyboardOpen=false;wsCaptchaDeadline=Date.now()+120000;clearTimeout(wsTypingTimer);wsRoomRef().child('players/'+wsRole).update({phase:'captcha',correct:wsCaptcha,typing:'',submitted:''}).catch(()=>{});wsRender()}
+function wsMakeCode(){let c;do{c=String(Math.floor(100000+Math.random()*900000))}while(!/^[1-9]/.test(c)||new Set(c).size<4);return c}
+let wsTypingPending='',wsTypingTimer=null,wsCaptchaDeadline=0;
+function wsSyncTyping(){if(!wsRoomId||!wsRole)return;const v=wsTypingPending;wsRoomRef().child('players/'+wsRole+'/typing').set(v).catch(()=>{});}
+function wsKey(k){if(!wsActiveAttempt||wsPage!=='game'||wsRoom?.players?.[wsRole]?.phase!=='captcha')return;wsTyped=k==='backspace'?wsTyped.slice(0,-1):(wsTyped.length<6?wsTyped+k:wsTyped);const input=W('ws-captcha-input');if(input)input.value=wsTyped;const submit=W('ws-captcha-submit');if(submit)submit.disabled=wsTyped.length!==6;wsTypingPending=wsTyped;clearTimeout(wsTypingTimer);wsTypingTimer=setTimeout(wsSyncTyping,85)}
+let wsCopyToastTimer=null;
+async function wsCopyCode(btn){if(btn){btn.classList.add('ws-pressed');setTimeout(()=>btn.classList.remove('ws-pressed'),180)}try{if(navigator.clipboard?.writeText)await navigator.clipboard.writeText(wsRoomId);else{const t=document.createElement('textarea');t.value=wsRoomId;document.body.appendChild(t);t.select();if(!document.execCommand('copy'))throw Error('複製失敗');t.remove()}const toast=W('ws-copy-toast');toast.textContent='複製成功！';toast.classList.remove('ws-show');void toast.offsetWidth;toast.classList.add('ws-show');clearTimeout(wsCopyToastTimer);wsCopyToastTimer=setTimeout(()=>toast.classList.remove('ws-show'),2000)}catch(e){wsNotice('複製失敗，請手動複製房號')}}
+function wsAccuracy(correct,submitted){if(!correct||!submitted)return 0;let matches=0;for(let i=0;i<6;i++)if(correct[i]===submitted[i])matches++;return +(matches/6*100).toFixed(1)}
+function wsGameKeypad(){return `<div class="virtual-keyboard ws-game-keyboard"><div class="vk-top"><span>自動填寫</span><span onclick="wsHideKeypad()">完成</span></div><div class="vk-grid">${['1','2','3','4','5','6','7','8','9','','0','backspace'].map(k=>k?`<div class="vk-key" role="button" data-ws-key="${k}">${k==='backspace'?'←':k}</div>`:'<div></div>').join('')}</div></div>`}
+function wsHideKeypad(){wsKeyboardOpen=false;W('ws-game-keyboard')?.querySelector('.virtual-keyboard')?.classList.remove('open');W('ws-content')?.querySelector('.ws-modal-shade')?.classList.remove('ws-keyboard-visible');wsPositionCaptcha()}
+function wsShowKeypad(){wsKeyboardOpen=true;W('ws-game-keyboard')?.querySelector('.virtual-keyboard')?.classList.add('open');W('ws-content')?.querySelector('.ws-modal-shade')?.classList.add('ws-keyboard-visible');wsPositionCaptcha()}
+
+function wsPositionCaptcha(){
+ const shade=W('ws-content')?.querySelector('.ws-modal-shade'),box=shade?.querySelector('.ws-captcha-modal');
+ if(!shade||!box)return;
+ const kb=W('ws-game-keyboard')?.querySelector('.virtual-keyboard');
+ const height=window.visualViewport?.height||window.innerHeight;
+ const keyboardHeight=wsKeyboardOpen&&kb?kb.getBoundingClientRect().height:0;
+ const topLimit=Math.max(8,(document.querySelector('#ws-app .ws-top')?.getBoundingClientRect().bottom||0)+8);
+ const bottomLimit=height-keyboardHeight-(wsKeyboardOpen?8:12);
+ const boxHeight=box.getBoundingClientRect().height;
+ const top=wsKeyboardOpen?Math.max(topLimit,bottomLimit-boxHeight):Math.max(topLimit,(height-boxHeight)/2);
+ shade.style.setProperty('--ws-dialog-top',Math.round(top)+'px');
+ box.style.maxHeight=Math.max(150,bottomLimit-top)+'px';
+}
+window.addEventListener('resize',()=>{if(W('ws-content')?.querySelector('.ws-captcha-modal'))wsPositionCaptcha()});
+function wsRefresh(){if(!wsActiveAttempt)return;wsCaptcha=wsMakeCode();wsTyped='';wsKeyboardOpen=false;wsCaptchaDeadline=Date.now()+120000;clearTimeout(wsTypingTimer);wsRoomRef().child('players/'+wsRole).update({correct:wsCaptcha,typing:''}).catch(()=>{});const cb=W('ws-captcha-input');if(cb)cb.value='';const code=W('ws-captcha-code');if(code)code.textContent=wsCaptcha;const btn=W('ws-captcha-submit');if(btn)btn.disabled=true;wsHideKeypad()}
+function wsScore(p){return Number((p?.points??(-(p?.fail||0)*20)).toFixed(2))}
+function wsScoreText(p){const penalty=wsRoom?.status==='finished'&&p?.phase==='captcha'?20:0;return (wsScore(p)-penalty).toFixed(1)}
+async function wsSubmit(){if(!wsActiveAttempt||wsTyped.length!==6||wsRoom?.status!=='playing')return;if(wsRoom.mode==='timed'&&wsServerNow()>wsRoom.startedAt+wsRoom.duration*1000+10000)return wsNotice('最後一題提交期限已結束');clearTimeout(wsTypingTimer);wsSyncTyping();const elapsed=(performance.now()-wsAttemptStart)/1000,ok=wsTyped===wsCaptcha&&elapsed<=Number(wsRoom.limit),p=wsRoom.players[wsRole];wsActiveAttempt=false;const now=wsServerNow();const success=(p.success||0)+(ok?1:0),fail=(p.fail||0)+(ok?0:1);const done=wsRoom.mode==='count'&&success>=wsRoom.goal;const points=wsScore(p)+(ok?100+20*Math.max(0,(Number(wsRoom.limit)-elapsed)/Number(wsRoom.limit)):-20);try{await wsRoomRef().child('players/'+wsRole).update({success,fail,attempts:(p.attempts||0)+1,submitted:wsTyped,typing:wsTyped,lastResult:ok?'成功':'失敗',lastDuration:Math.round(elapsed*100)/100,lastAccuracy:wsAccuracy(wsCaptcha,wsTyped),points:+points.toFixed(2),phase:done?'done':'popup',finishedAt:done?now:0});wsLastAttempt=Date.now();wsRender();if(!done){clearTimeout(wsAutoTimer);wsAutoTimer=setTimeout(wsNext,2000)}else wsCheckEnd()}catch(e){wsNotice(e.message)}}
+function wsNext(){clearTimeout(wsAutoTimer);if(wsRoom?.status!=='playing')return;const p=wsRoom.players?.[wsRole];if(p?.finishedAt)return;if(wsRoom.mode==='timed'&&wsRemaining()<=0){wsRoomRef().child('players/'+wsRole+'/phase').set('waiting').catch(()=>{});return}if(wsRoom.mode==='count'&&((wsRoom.players?.wing?.success||0)>=wsRoom.goal||(wsRoom.players?.stars?.success||0)>=wsRoom.goal)){wsRoomRef().child('players/'+wsRole+'/phase').set('waiting').catch(()=>{});return}wsStartAttempt()}
+async function wsCheckEnd(){
+ if(wsFinalizing||wsLocalFinished||wsRole!=='wing'||!wsRoom||wsRoom.status!=='playing')return;
+ const r=wsRoom,now=wsServerNow(),limit=r.startedAt+(r.mode==='timed'?r.duration*1000:600000),w=r.players?.wing,st=r.players?.stars;
+ if(!w||!st)return;
+ const expired=now>=limit;
+ const targetReached=r.mode==='count'&&(w.success>=r.goal||st.success>=r.goal);
+ const finishAt=r.mode==='count'&&targetReached?(wsCountEndAt||(wsCountEndAt=now)):limit;
+ if(r.mode==='count'&&!targetReached)wsCountEndAt=0;
+ const pending=p=>p?.phase==='captcha'&&!p?.finishedAt;
+ const wOff=w.online===false&&now-(w.lastSeen||now)>30000,stOff=st.online===false&&now-(st.lastSeen||now)>30000;
+ const shouldFinish=(expired||targetReached)&&(!pending(w)&&!pending(st)||now>=finishAt+10000)||wOff||stOff;
+ if(!shouldFinish)return;
+ const a=wsScore(w)-(now>=finishAt+10000&&pending(w)?20:0),b=wsScore(st)-(now>=finishAt+10000&&pending(st)?20:0);let winner=a>b?'wing':b>a?'stars':'tie';
+ if(wOff||stOff)winner=wOff&&stOff?'none':wOff?'stars':'wing';
+ wsFinalizing=true;
+ try{await wsRoomRef().update({winner,finalScores:{wing:{points:+a.toFixed(2),success:w.success||0,fail:(w.fail||0)+(now>=finishAt+10000&&pending(w)?1:0)},stars:{points:+b.toFixed(2),success:st.success||0,fail:(st.fail||0)+(now>=finishAt+10000&&pending(st)?1:0)}},status:'finished'});wsLocalFinished=true;}
+ catch(e){if(!wsSettlementErrorShown){wsSettlementErrorShown=true;wsNotice('結算同步失敗：'+e.message+'。請檢查 Firebase Rules；可使用左上角返回退出。')}wsLocalFinished=true;wsPage='result';wsResultCache={wing:{points:a,success:w.success||0,fail:w.fail||0},stars:{points:b,success:st.success||0,fail:st.fail||0}};wsRender();}finally{wsFinalizing=false}
+}
+async function wsRematch(){
+ if(!wsRoom||!wsRole||wsRole==='jenny'||wsRematchBusy)return;
+ const room=wsRoom,round=room.round||1;
+ if(room.status!=='finished'&&room.status!=='lobby')return;
+ wsRematchBusy=true;
+ try{
+  if(wsRole==='wing'&&room.status==='finished'){
+   // Host only writes room-level metadata. Each player resets their own subtree.
+   await wsRoomRef().child('round').set(round+1);
+   await wsRoomRef().child('startedAt').set(0);
+   await wsRoomRef().child('status').set('lobby');
+  }
+  if(wsRoom?.status==='lobby'&&wsRoom.round>round)await wsResetOwnRound(wsRoom.round);
+  wsPage='lobby';wsActiveAttempt=false;wsKeyboardOpen=false;clearTimeout(wsAutoTimer);wsRender();
+ }catch(e){wsNotice('重新一局失敗：'+e.message)}finally{wsRematchBusy=false}
+}
+async function wsNewRoom(){await wsLeaveRoom(false);await wsCreate()}
+function wsPlayerPanel(role){
+ const p=wsRoom?.players?.[role]||{},name=role==='wing'?'Wing 隊':'Stars 隊';
+ const states={waiting:'等待開始',loading:'正在刷新',detail:'活動詳情',captcha:'正在輸入驗證碼',popup:'兌換結果',done:'完成目標'};
+ const phase=states[p.phase]||'等待開始';
+ return `<section class="ws-watch-column" aria-label="${name}"><h3>${name}</h3><div class="ws-watch-state">${phase}</div><div class="ws-watch-label">正確驗證碼</div><div class="ws-watch-digits">${wsEsc(p.correct||'------')}</div><div class="ws-watch-label">正在輸入</div><div class="ws-watch-digits">${wsEsc((p.typing||'').padEnd(6,'_'))}</div><div class="ws-watch-label">最後送出</div><div class="ws-watch-digits">${wsEsc(p.submitted||'—')}</div><div class="ws-watch-label">兌換結果</div><div class="ws-watch-value">${wsEsc(p.lastResult||'—')}</div><div class="ws-watch-label">上次消耗時間</div><div class="ws-watch-value">${p.lastDuration?Number(p.lastDuration).toFixed(2)+' 秒':'—'}</div><div class="ws-watch-record">成功 ${p.success||0}／失敗 ${p.fail||0}</div><div class="ws-watch-label">總積分</div><div class="ws-watch-score">${wsScoreText(p)}</div></section>`
+}
+function wsUpdateLobbyStates(){const w=wsRoom?.players?.wing,st=wsRoom?.players?.stars;const e=W('ws-lobby-players');if(e)e.innerHTML=`<div>Wing：${w?.uid?'已加入':'未加入'} ${w?.ready?'✓ 已準備':''}</div><div>Stars：${st?.uid?'已加入':'等待玩家'} ${st?.ready?'✓ 已準備':''}</div><div>Jenny：${wsRoom?.spectator?.uid?'已加入':'未加入（可選）'}</div>`;const b=W('ws-start-btn');if(b)b.disabled=!st?.uid||!w?.ready||!st?.ready;}
+function wsUpdateGameStats(){if(wsPage!=='game')return;const p=wsRoom?.players?.[wsRole];if(!p)return;const count=W('ws-game-count');if(count)count.textContent=`成功 ${p.success||0} 次｜失敗 ${p.fail||0} 次${wsRoom.mode==='count'?`｜目標 ${wsRoom.goal} 次`:''}`;}
+function wsRender(){const c=W('ws-content');if(!c||W('ws-app').style.display==='none')return;let html='';c.classList.remove('ws-center','ws-game-screen','ws-jenny-screen');
+if(wsPage==='entry')html=wsBase();
+else if(wsPage==='rules')html=wsRulesHtml();
+else if(wsPage==='join')html=`<div class="ws-plain"><h2>輸入房號</h2><input id="ws-code" type="text" inputmode="numeric" maxlength="6" placeholder="6 位數房號"><button class="ws-green" onclick="wsJoin()">加入房間</button><button class="ws-white" onclick="wsEntry()">返回</button></div>`;
+else if(wsPage==='role')html=`<div class="ws-plain"><h2>房間 ${wsEsc(wsRoomId)}</h2><h3>請選擇角色</h3><button class="ws-green" onclick="wsChoose('stars')" ${wsRoom?.players?.stars&&wsRoom.players.stars.uid!==wsUID?'disabled':''}>Stars 隊（參賽）</button><button class="ws-white" onclick="wsChoose('jenny')" ${wsRoom?.spectator&&wsRoom.spectator.uid!==wsUID?'disabled':''}>Jenny 視角（觀戰）</button></div>`;
+else if(wsPage==='lobby'){const r=wsRoom||{},w=r.players?.wing,st=r.players?.stars;const ready=!!r.players?.[wsRole]?.ready;html=`<div class="ws-plain ws-lobby"><h2>房間 ${wsEsc(wsRoomId)} <span class="ws-tag">第 ${r.round||1} 局</span></h2><button class="ws-gray ws-copy" onclick="wsCopyCode(this)">複製房號</button><div id="ws-lobby-players" class="ws-player-status"><div>Wing：${w?.uid?'已加入':'未加入'} ${w?.ready?'✓ 已準備':''}</div><div>Stars：${st?.uid?'已加入':'等待玩家'} ${st?.ready?'✓ 已準備':''}</div><div>Jenny：${r.spectator?.uid?'已加入':'未加入（可選）'}</div></div>${wsRole==='wing'?`<label>比賽模式<select onchange="wsConfigUpdate('mode',this.value)"><option value="timed" ${r.mode==='timed'?'selected':''}>限時模式</option><option value="count" ${r.mode==='count'?'selected':''}>次數模式</option></select></label><label>全場時間（限時模式）<select onchange="wsConfigUpdate('duration',+this.value)"><option value="30" ${r.duration===30?'selected':''}>30 秒</option><option value="60" ${r.duration===60?'selected':''}>60 秒</option></select></label><label>成功目標（次數模式）<select onchange="wsConfigUpdate('goal',+this.value)">${Array.from({length:11},(_,i)=>`<option value="${i+10}" ${r.goal===i+10?'selected':''}>${i+10} 次</option>`).join('')}</select></label><label>單次時間限制<select onchange="wsConfigUpdate('limit',+this.value)">${[4,4.5,5,5.5,6].map(x=>`<option value="${x}" ${r.limit===x?'selected':''}>${x} 秒</option>`).join('')}</select></label>`:`<div>模式：${r.mode==='timed'?'限時':'次數'} / 單次 ${r.limit} 秒</div>`}${wsRole!=='jenny'?`<button class="${ready?'ws-white':'ws-green'}" onclick="wsReady()">${ready?'取消準備':'準備'}</button>`:'<p class="ws-muted">Jenny 已加入觀戰</p>'}${wsRole==='wing'?`<button id="ws-start-btn" class="${ready?'ws-green':'ws-white'}" onclick="wsStart()" ${!st?.uid||!w?.ready||!st?.ready?'disabled':''}>開始比賽</button>`:''}${!st?.uid?'<p class="ws-muted">等待 Stars 加入</p>':''}</div>`;}
+else if(wsPage==='game'){const r=wsRoom||{},p=r.players?.[wsRole]||{},remaining=wsRemaining();c.classList.add('ws-game-screen');if(wsRole==='jenny'){c.classList.add('ws-jenny-screen');html=`<div class="ws-plain ws-spectator"><h2>Jenny 上帝視角</h2><div class="ws-watch-mode">模式：${r.mode==='timed'?'限時':'次數'}｜剩餘 <b id="ws-remaining">${remaining.toFixed(1)}</b> 秒</div><div class="ws-columns">${wsPlayerPanel('wing')}${wsPlayerPanel('stars')}</div></div>`;}else{const phase=p.phase||'loading';const banner=`<div class="ws-competition-banner"><b>${wsRole==='wing'?'Wing 隊':'Stars 隊'}｜${r.mode==='timed'?'限時':'次數'}模式</b><strong>剩餘 <span id="ws-remaining">${remaining.toFixed(1)}</span> 秒</strong><span id="ws-game-count">成功 ${p.success||0} 次｜失敗 ${p.fail||0} 次${r.mode==='count'?`｜目標 ${r.goal} 次`:''}</span><span>單次限制 ${r.limit} 秒｜本次 <span id="ws-elapsed">${wsActiveAttempt?((performance.now()-wsAttemptStart)/1000).toFixed(2):'—'}</span> 秒</span></div>`;html=`<div class="ws-detail-top"><span>活動詳情</span><span id="ws-clock" class="ws-clock">${wsClockText()}</span></div><div class="ws-detail-body">${phase==='loading'?'<div class="ws-loading">正在刷新...</div>':''}${banner}<h3>Wing Stars 賽前簽名會</h3><div class="ws-points"><span>兌換點數</span><b>60 點</b></div><div class="ws-detail-info"><small>兌換期間</small><b>${document.querySelector('.ws-yesterday')?.textContent||''} 13:00 ~ 23:00</b></div><div class="ws-detail-info"><small>兌換資格</small><b>所有會員皆適用</b></div><div class="ws-detail-info"><small>兌換上限</small><b>1次</b></div><div class="ws-detail-info"><small>全站數量</small><b>50</b></div><div class="ws-detail-info"><small>使用期間</small><b>2026/09/13 12:00 ~ 2026/09/13 19:00</b></div><div class="ws-detail-info"><small>使用地點</small><b>澄清湖棒球場 (高雄市鳥松區大埤路 113 號)</b></div><button class="ws-green ws-redeem" onclick="wsOpenCaptcha()" ${phase!=='detail'||remaining<=0?'disabled':''}>${remaining<=0?'時間已到，不可兌換':'立即兌換'}</button></div>`;
+if(phase==='captcha')html+=`<div class="ws-modal-shade"><div class="ws-captcha-modal"><div class="captcha-box" id="ws-captcha-code">${wsEsc(p.correct||wsCaptcha||'------')}</div><div class="modal-title">輸入驗證碼完成兌換</div><div class="modal-desc">請輸入驗證碼確認身份，兌換後不可取消。</div><div class="captcha-input-container" onclick="wsShowKeypad()"><input id="ws-captcha-input" class="captcha-input" readonly placeholder="輸入6位數驗證碼" value="${wsEsc(wsTyped)}"></div><div class="refresh-row"><span></span><div class="refresh-right"><div class="refresh-btn" onclick="wsRefresh()">🔄 驗證碼更新</div><span id="ws-captcha-countdown">02:00</span></div></div><div class="modal-buttons"><button class="modal-btn cancel" onclick="wsHideKeypad()">收起鍵盤</button><button id="ws-captcha-submit" class="modal-btn submit" onclick="wsSubmit()" ${wsTyped.length!==6?'disabled':''}>立即兌換</button></div></div></div><div id="ws-game-keyboard">${wsGameKeypad()}</div>`;
+else if(phase==='popup')html+=`<div class="ws-modal-shade"><div class="ws-result-modal ws-beta10-result"><div class="ws-result-icon ${p.lastResult==='成功'?'ws-success':'ws-failure'}">${p.lastResult==='成功'?'✓':'✕'}</div><h3>${p.lastResult==='成功'?'兌換成功！':'兌換失敗！'}</h3><p>${p.lastResult==='成功'?'兌換成功！':'兌換失敗！'}</p><p class="${Number(p.lastDuration)>Number(r.limit)?'ws-overlimit':''}">消耗時間：${Number(p.lastDuration||0).toFixed(2)} 秒${Number(p.lastDuration)>Number(r.limit)?`（設定時間：${r.limit} 秒）`:''}</p><p>準確率：${Number(p.lastAccuracy??(p.lastResult==='成功'?100:0)).toFixed(1).replace(/\.0$/,'')}%</p><button class="ws-white" onclick="wsNext()">確認</button></div></div>`;
+else if(phase==='done')html+=`<div class="ws-modal-shade"><div class="ws-result-modal"><h2>已完成目標！</h2><p>等待另一位玩家完成...</p></div></div>`;}}
+else if(wsPage==='hostgone')html=`<div class="ws-plain ws-final"><h2>房主已離開</h2><p>房主已離開，5秒鐘後自動返回主畫面</p><h2><span id="ws-hostgone-count">5</span> 秒</h2></div>`;
+else if(wsPage==='result'){
+ const r=wsRoom||{},scores=wsResultCache||r.finalScores||{},w=scores.wing||r.players?.wing||{},st=scores.stars||r.players?.stars||{};
+ const a=Number(w.points||0),b=Number(st.points||0),winner=a>b?'wing':b>a?'stars':'tie';
+ html=`<div class="ws-plain ws-final"><h2>比賽結束</h2><h3>${r.winner==='none'?'雙方失敗，無勝利者':winner==='tie'?'平手！':winner==='wing'?'Wing 隊獲勝！':'Stars 隊獲勝！'}</h3><div class="ws-columns"><div><b>Wing 隊</b><div class="ws-big">${a.toFixed(1)} 分</div><small>成功 ${w.success||0} / 失敗 ${w.fail||0}</small></div><div><b>Stars 隊</b><div class="ws-big">${b.toFixed(1)} 分</div><small>成功 ${st.success||0} / 失敗 ${st.fail||0}</small></div></div><button class="ws-green" onclick="wsRematch()">重新一局</button>${wsRole==='wing'?'<button class="ws-white" onclick="wsNewRoom()">重開房間</button>':''}<button class="ws-white" onclick="wsExit()">回到主頁面</button></div>`;
+}
+c.classList.toggle('ws-center',['entry','join','role','lobby','result'].includes(wsPage));c.innerHTML=html;if(wsPage==='game'&&wsKeyboardOpen&&wsRole!=='jenny'&&wsRoom?.players?.[wsRole]?.phase==='captcha')wsShowKeypad();if(wsPage==='game'&&wsRoom?.players?.[wsRole]?.phase==='captcha')requestAnimationFrame(wsPositionCaptcha);}
+// Delegated pointer events avoid iOS double-tap zoom and keep typing local and immediate.
+W('ws-app').addEventListener('pointerdown',e=>{const k=e.target.closest('[data-ws-key]');if(!k)return;e.preventDefault();k.classList.add('ws-key-down');wsKey(k.dataset.wsKey);},{passive:false});
+setInterval(()=>{if(W('ws-app')?.style.display!=='flex'||!wsRoom||wsRoom.status!=='playing')return;const countdown=W('ws-captcha-countdown');if(countdown){const secs=Math.max(0,Math.ceil((wsCaptchaDeadline-Date.now())/1000));countdown.textContent=String(Math.floor(secs/60)).padStart(2,'0')+':'+String(secs%60).padStart(2,'0');if(secs===0){wsRefresh()}}const rem=W('ws-remaining');if(rem)rem.textContent=wsRemaining().toFixed(1);const elapsed=W('ws-elapsed');if(elapsed&&wsActiveAttempt)elapsed.textContent=((performance.now()-wsAttemptStart)/1000).toFixed(2);if(wsRole==='wing'&&!wsLocalFinished)wsCheckEnd();if(wsRoom.mode==='timed'&&wsRemaining()<=0&&wsRole!=='jenny'){const redeem=W('ws-content')?.querySelector('.ws-redeem');if(redeem){redeem.disabled=true;redeem.textContent='時間已到，不可兌換'}}},300);
+W('ws-app').addEventListener('pointerup',()=>document.querySelectorAll('#ws-app .ws-key-down').forEach(el=>el.classList.remove('ws-key-down')));
+W('ws-app').addEventListener('pointercancel',()=>document.querySelectorAll('#ws-app .ws-key-down').forEach(el=>el.classList.remove('ws-key-down')));
+setInterval(()=>{if(W('ws-app')?.style.display==='flex'){const clock=W('ws-clock');if(clock)clock.textContent=wsClockText()}},40);
+// Attempt a rejoin after anonymous auth is restored in the same browser.
+window.addEventListener('pagehide',()=>{if(wsDB&&wsRoomId&&wsRole){const p=wsRole==='jenny'?'spectator':'players/'+wsRole;wsRoomRef().child(p+'/online').set(false).catch(()=>{})}});
 </script>
 </body>
 </html>
